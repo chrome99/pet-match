@@ -1,0 +1,22 @@
+#homeContainer {
+    height: 100%;
+    width: 70%;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+#heading {
+    font-size: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+#navbar {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+#signinBtn {
+    margin-right: 1rem
+}
