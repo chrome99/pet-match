@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import "./Home.css";
 import SignInModal from "./SignInModal";
 import LogInModal from "./LogInModal";
