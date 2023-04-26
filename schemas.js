@@ -7,9 +7,10 @@ const userSchema = new mongoose.Schema({
     firstName: rString,
     lastName: rString,
     phone: rString,
-    email: rString,
+    email: {type: String, required: true, lowercase: true},
     password: rString,
-    admin: rBoolean
+    admin: rBoolean,
+    token: { type: String },
 }, {timestamps: true});
 
 
