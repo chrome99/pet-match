@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button } from "react-bootstrap";
 import "./Home.css";
 import SignInModal from "./SignInModal";
 import LogInModal from "./LogInModal";
+import { UserContext, UserContextType } from "../UserContext";
 
 function Home() {
   const [signinModal, setSigninModal] = useState(false);
   const [loginModal, setLoginModal] = useState(false);
+  const { user, changeUser } = useContext(UserContext) as UserContextType;
+
+  function logout() {
+    changeUser(null);
+  }
 
   return (
     <>
@@ -15,6 +21,7 @@ function Home() {
           <Button
             id="signinBtn"
             variant="success"
+            className={user ? "d-none" : ""}
             onClick={() => setSigninModal(true)}
           >
             Sign In
@@ -22,9 +29,11 @@ function Home() {
           <Button
             id="loginBtn"
             variant="success"
-            onClick={() => setLoginModal(true)}
+            onClick={() => {
+              user ? logout() : setLoginModal(true);
+            }}
           >
-            Log In
+            {user ? "Log Out" : "Log In"}
           </Button>
         </div>
         <div id="heading">Find your new best friend!</div>
