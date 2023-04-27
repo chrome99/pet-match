@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { UserContext, IUser } from "./UserContext";
 import UserRoute from "./UserRoute";
@@ -7,7 +7,7 @@ import Home from "./Home/Home";
 import Profile from "./Profile/Profile";
 import Pets from "./Pets/Pets";
 import Search from "./Search/Search";
-import Navbar from "./Navbar";
+import Navbar from "./Navbar/Navbar";
 
 function App() {
   const [user, setUser] = useState<IUser | null>(initUser);
@@ -47,14 +47,7 @@ function App() {
               </UserRoute>
             }
           />
-          <Route
-            path="/search"
-            element={
-              <UserRoute redirectRoute={"/"}>
-                <Search />
-              </UserRoute>
-            }
-          />
+          <Route path="/search" element={<Search />} />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

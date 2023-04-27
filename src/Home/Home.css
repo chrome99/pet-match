@@ -9,14 +9,7 @@
 }
 #heading {
     font-size: 2rem;
-    margin-top: 2rem;
+}
+#heading, #infoText {
     margin-bottom: 1rem;
-}
-#navbar {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-}
-#signinBtn {
-    margin-right: 1rem
 }
