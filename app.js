@@ -4,7 +4,7 @@ const { ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
 const bcrypt = require("bcrypt");
-const { User } = require("./schemas");
+const { User } = require("./userSchema");
 const auth = require("./middleware/auth");
 const URI = process.env.URI;
 const PORT = process.env.PORT;
@@ -27,6 +27,45 @@ app.post("/auth", auth, (req, res) => {
   res.status(200).send("Welcome!");
 });
 
+app.put("/user/:id", auth, (req, res) => {
+    const { id } = req.params;
+    const { firstName, lastName, email, phone, password, bio } = req.body;
+    User.findById(id)
+    .then(userDoc => {
+        if (userDoc) {
+            User.findOne({ email })
+            .then(userExists => {
+                if (userExists) {
+                    return res.status(400).send("Email already in use");
+                }
+                else {
+                    if (firstName) {userDoc.firstName = firstName}
+                    if (lastName) {userDoc.lastName = lastName}
+                    if (email) {userDoc.email = email}
+                    if (phone) {userDoc.phone = phone}
+                    if (password) {userDoc.password = password}
+
+                    //bio can be an empty field, so if empty string set to empty string
+                    if (bio || bio === "") {userDoc.bio = bio}
+
+                    userDoc.save()
+                    .then(updatedUser => {
+                        return res.status(200).send(updatedUser);
+                    })
+                }
+            })
+        }
+        else {
+            return res.status(400).send("User does not exist");
+        }
+    })
+    .catch(err => {
+        console.log(err.message);
+        res.status(500).send(err.message);
+    })
+  });
+  
+
 app.post('/register', (req, res) => {
     const { firstName, lastName, email, phone, password } = req.body;
     if (!(firstName && lastName && email && phone && password)) {
@@ -40,6 +79,7 @@ app.post('/register', (req, res) => {
         }
 
         req.body.admin = false;
+        req.body.bio = "";
         const newUser = new User(req.body);
         newUser.save()
         .then(result => {
