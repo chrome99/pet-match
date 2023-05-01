@@ -203,12 +203,6 @@ function Profile() {
         </Form.Group>
 
         <Form.Group className="text-center" controlId="formBtn">
-          <div>
-            <Spinner
-              className={`mb-3 ${!spinner && "d-none"}`}
-              animation="border"
-            />
-          </div>
           <Button
             variant="primary"
             type="submit"
@@ -217,6 +211,15 @@ function Profile() {
               saveChanges();
             }}
           >
+            <Spinner
+              id="submitSpinner"
+              className={spinner ? "" : "d-none"}
+              as="span"
+              animation="border"
+              size="sm"
+              role="status"
+              aria-hidden="true"
+            />
             Save Changes
           </Button>
         </Form.Group>

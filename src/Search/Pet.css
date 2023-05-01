@@ -1,0 +1,17 @@
+.pet {
+    background-color: #ededed;
+    border-radius: 1rem;
+    margin: 1rem 0rem;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    margin: 0.5rem;
+}
+.petImg {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+}

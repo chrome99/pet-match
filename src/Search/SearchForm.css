@@ -1,0 +1,10 @@
+#searchContainer {
+    width: 100%;
+    height: 50%;
+}
+#searchSwitch {
+    margin-top: 1rem;
+}
+#submitSpinner {
+    margin-right: 0.5rem;
+}
