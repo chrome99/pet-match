@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const { User } = require("./userSchema");
+const { Pet } = require("./petSchema");
 const auth = require("./middleware/auth");
 const URI = process.env.URI;
 const PORT = process.env.PORT;
@@ -26,6 +27,25 @@ app.use(cors({
 app.post("/auth", auth, (req, res) => {
   res.status(200).send("Welcome!");
 });
+
+app.get("/pets", (req, res) => {
+    const searchQuery = {};
+    const { adoptionStatus, type, height, weight, name } = req.query;
+    if (adoptionStatus) {searchQuery.adoptionStatus = adoptionStatus}
+    if (type) {searchQuery.type = type}
+    if (height) {searchQuery.height = height}
+    if (weight) {searchQuery.weight = weight}
+    if (name) {searchQuery.name = { "$regex": name, "$options": "i" }}
+
+    Pet.find(searchQuery)
+    .then(searchResult => {
+        return res.status(200).send(searchResult);
+    })
+    .catch(err => {
+        console.log(err.message);
+        res.status(500).send(err.message);
+    })
+})
 
 app.put("/user/:id", auth, (req, res) => {
     const { id } = req.params;
