@@ -10,7 +10,7 @@ import {
   Collapse,
 } from "react-bootstrap";
 import axios from "axios";
-import { IPet } from "./PetsCollection";
+import { IPet } from "../Pet/PetProfile";
 
 interface SearchFormProps {
   setPets: React.Dispatch<React.SetStateAction<IPet[] | null>>;
@@ -57,15 +57,13 @@ function SearchForm({ setPets }: SearchFormProps) {
     axios
       .get("http://localhost:8080/pets/" + queryInput)
       .then((response) => {
-        console.log(response.data);
         response.data.map((pet: any) => {
-          pet.id = pet._id;
+          return (pet.id = pet._id);
         });
         setPets(response.data);
         setSpinner(false);
       })
       .catch((error) => {
-        console.log(error);
         if (error.response) {
           setAlert(error.response.data);
         } else {

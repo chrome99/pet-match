@@ -81,6 +81,7 @@ function Profile() {
           bio: response.data.bio,
           admin: user.admin,
           token: user.token,
+          pets: user.pets,
         };
         changeUser(updatedUser);
 

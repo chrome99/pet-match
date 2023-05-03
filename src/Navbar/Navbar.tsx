@@ -17,7 +17,7 @@ function Navbar() {
     <>
       <div id="myNavbar">
         <Link to="/">Home</Link>
-        <Link to="/pets">Pets</Link>
+        <Link to="/mypets">Pets</Link>
         <Link to="/profile">Profile</Link>
         <Link to="/search">Search</Link>
         <Button

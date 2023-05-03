@@ -1,34 +1,18 @@
 import React from "react";
 import "./PetsCollection.css";
-import Pet from "./Pet";
-
-export type IPet = {
-  id: string;
-  type: string;
-  name: string;
-  adoptionStatus: "Fostered" | "Adopted" | "Available";
-  picture: string;
-  height: number;
-  weight: number;
-  color: string;
-  bio: string;
-  hypoallergnic: boolean;
-  dietery: string[];
-  breed: string;
-};
+import PetCard from "./PetCard";
+import { IPet } from "../Pet/PetProfile";
 
 interface PetsCollectionProps {
-  pets: IPet[] | null;
+  pets: IPet[];
 }
 
 function PetsCollection({ pets }: PetsCollectionProps) {
   return (
     <div id="petsCollectionContainer">
-      {pets
-        ? pets.map((pet) => {
-            return <Pet pet={pet} key={pet.id} />;
-          })
-        : null}
+      {pets.map((pet) => {
+        return <PetCard pet={pet} key={pet.id} />;
+      })}
     </div>
   );
 }

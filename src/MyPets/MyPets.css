@@ -1,0 +1,11 @@
+#myPetsContainer {
+    height: 95%;
+    width: 70%;
+}
+#myPetsSpinnerDiv {
+    margin: auto;
+    width: fit-content;
+}
+#myPetsCollectionContainer {
+    height: 90%;
+}

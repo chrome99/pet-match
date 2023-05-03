@@ -28,6 +28,7 @@ function LoginTab({ setModal }: MyModalProps) {
           bio: response.data.bio,
           admin: response.data.admin,
           token: response.data.token,
+          pets: response.data.pets,
         };
         changeUser(newUser);
         setModal(false);

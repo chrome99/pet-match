@@ -10,6 +10,7 @@ export type IUser = {
   bio: string;
   token: string;
   admin: boolean;
+  pets: string[];
 };
 
 export type UserContextType = {

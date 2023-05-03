@@ -5,7 +5,8 @@ import { UserContext, IUser } from "./UserContext";
 import UserRoute from "./UserRoute";
 import Home from "./Home/Home";
 import Profile from "./Profile/Profile";
-import Pets from "./Pets/Pets";
+import MyPets from "./MyPets/MyPets";
+import PetProfile from "./Pet/PetProfile";
 import Search from "./Search/Search";
 import Navbar from "./Navbar/Navbar";
 
@@ -32,13 +33,14 @@ function App() {
         <Routes>
           <Route path="/" index element={<Home />} />
           <Route
-            path="/pets"
+            path="/mypets"
             element={
               <UserRoute redirectRoute={"/"}>
-                <Pets />
+                <MyPets />
               </UserRoute>
             }
           />
+          <Route path="/pet/:id" element={<PetProfile />} />
           <Route
             path="/profile"
             element={

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Search.css";
 import SearchForm from "./SearchForm";
 import PetsCollection from "./PetsCollection";
-import { IPet } from "./PetsCollection";
+import { IPet } from "../Pet/PetProfile";
 
 function Search() {
   const [pets, setPets] = useState<IPet[] | null>(null);
@@ -10,7 +10,11 @@ function Search() {
   return (
     <div id="searchPage">
       <SearchForm setPets={setPets} />
-      <PetsCollection pets={pets} />
+      {pets ? (
+        <div id="searchResultsContainer">
+          <PetsCollection pets={pets} />
+        </div>
+      ) : null}
     </div>
   );
 }
