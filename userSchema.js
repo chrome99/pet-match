@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
     bio: { type: String },
     admin: rBoolean,
     token: { type: String },
+    pets: {type: Array, required: true}
 }, {timestamps: true});
 
 

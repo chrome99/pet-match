@@ -11,9 +11,10 @@ const petSchema = new mongoose.Schema({
     height: rNumber,
     weight: rNumber,
     color: rString,
-    bio: rString,
+    bio: String,
     hypoallergnic: rBoolean,
     dietery: {type: Array, required: true},
+    users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     breed: rString,
 }, {timestamps: true});
 
