@@ -4,11 +4,14 @@ import PetsCollection from "../Search/PetsCollection";
 import { IPet } from "../Pet/PetProfile";
 import axios from "axios";
 import { UserContext, UserContextType } from "../UserContext";
-import { Spinner } from "react-bootstrap";
+import { Spinner, Tabs, Tab } from "react-bootstrap";
 
 function MyPets() {
   const { user } = useContext(UserContext) as UserContextType;
-  const [petsList, setPetsList] = useState<IPet[] | null | undefined>(
+  const [myPetsList, setMyPetsList] = useState<IPet[] | null | undefined>(
+    undefined
+  );
+  const [savedPetsList, setSavedPetsList] = useState<IPet[] | null | undefined>(
     undefined
   );
 
@@ -16,17 +19,41 @@ function MyPets() {
     if (!user) return;
 
     if (user.pets.length === 0) {
-      setPetsList(null);
-      return;
+      setMyPetsList(null);
+    } else {
+      axios
+        .get("http://localhost:8080/petsbyid?ids=" + user.pets.toString())
+        .then((response) => {
+          response.data.forEach((pet: any) => {
+            pet.id = pet._id;
+          });
+          setMyPetsList(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
 
     axios
-      .get("http://localhost:8080/petsbyid?ids=" + user.pets.toString())
-      .then((response) => {
-        response.data.forEach((pet: any) => {
-          pet.id = pet._id;
-        });
-        setPetsList(response.data);
+      .get(`http://localhost:8080/wishlist?userId=${user.id}`)
+      .then((userWishlist) => {
+        if (userWishlist.data.length === 0) {
+          setSavedPetsList(null);
+          return;
+        }
+        axios
+          .get(
+            "http://localhost:8080/petsbyid?ids=" + userWishlist.data.toString()
+          )
+          .then((petsInWishlist) => {
+            petsInWishlist.data.forEach((pet: any) => {
+              pet.id = pet._id;
+            });
+            setSavedPetsList(petsInWishlist.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -36,16 +63,28 @@ function MyPets() {
   return (
     <div id="myPetsContainer">
       <h1>My Pets</h1>
-      {petsList === undefined ? ( //if undefined (did not get data from the server yet)
+      {myPetsList === undefined || savedPetsList === undefined ? ( //if undefined (did not get data from the server yet)
         <div id="myPetsSpinnerDiv">
           <Spinner animation="border" role="status" />
         </div>
-      ) : petsList === null ? ( //else if null
-        "You currently do not own or foster any pets."
       ) : (
-        //else if pets (not undefined and not null)
         <div id="myPetsCollectionContainer">
-          <PetsCollection pets={petsList} />
+          <Tabs justify id="uncontrolled-tab-example" className="mb-3">
+            <Tab eventKey="myPetsTab" title="My Pets">
+              {myPetsList ? (
+                <PetsCollection pets={myPetsList} />
+              ) : (
+                "You currently do not own or foster any pets."
+              )}
+            </Tab>
+            <Tab eventKey="savedPetsTab" title="Saved Pets">
+              {savedPetsList ? (
+                <PetsCollection pets={savedPetsList} />
+              ) : (
+                "You currently do not have any saved pets."
+              )}
+            </Tab>
+          </Tabs>
         </div>
       )}
     </div>

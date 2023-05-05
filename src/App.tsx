@@ -9,6 +9,7 @@ import MyPets from "./MyPets/MyPets";
 import PetProfile from "./Pet/PetProfile";
 import Search from "./Search/Search";
 import Navbar from "./Navbar/Navbar";
+import Dashboard from "./Admin/Dashboard";
 
 function App() {
   const [user, setUser] = useState<IUser | null>(initUser);
@@ -50,6 +51,14 @@ function App() {
             }
           />
           <Route path="/search" element={<Search />} />
+          <Route
+            path="/dashboard"
+            element={
+              <UserRoute redirectRoute={"/"} onlyAdmin={true}>
+                <Dashboard />
+              </UserRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

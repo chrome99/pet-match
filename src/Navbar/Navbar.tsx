@@ -9,6 +9,8 @@ function Navbar() {
   const { user, changeUser } = useContext(UserContext) as UserContextType;
   const [modal, setModal] = useState(false);
 
+  //todo: edit navbar to popout sidebar.
+
   function logout() {
     changeUser(null);
   }
@@ -17,9 +19,14 @@ function Navbar() {
     <>
       <div id="myNavbar">
         <Link to="/">Home</Link>
-        <Link to="/mypets">Pets</Link>
-        <Link to="/profile">Profile</Link>
         <Link to="/search">Search</Link>
+        {user ? (
+          <>
+            <Link to="/mypets">My Pets</Link>
+            <Link to="/profile">Profile</Link>
+          </>
+        ) : null}
+        {user && user.admin ? <Link to="/dashboard">Dashboard</Link> : null}
         <Button
           id="loginBtn"
           variant="success"

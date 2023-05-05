@@ -5,13 +5,16 @@ import { IPet } from "../Pet/PetProfile";
 
 interface PetsCollectionProps {
   pets: IPet[];
+  onClickFunction?: (pet: IPet) => void;
 }
 
-function PetsCollection({ pets }: PetsCollectionProps) {
+function PetsCollection({ pets, onClickFunction }: PetsCollectionProps) {
   return (
     <div id="petsCollectionContainer">
       {pets.map((pet) => {
-        return <PetCard pet={pet} key={pet.id} />;
+        return (
+          <PetCard pet={pet} key={pet.id} onClickFunction={onClickFunction} />
+        );
       })}
     </div>
   );

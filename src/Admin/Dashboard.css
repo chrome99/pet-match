@@ -1,0 +1,18 @@
+#dashboardContainer {
+    height: 95%;
+    width: 70%;
+}
+#allPetsCollection {
+    height: 50%;
+    overflow-y: scroll;
+}
+#allPetsSpinnerDiv {
+    margin: auto;
+    width: fit-content;
+}
+#managePetsHeading {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0.5rem;
+}

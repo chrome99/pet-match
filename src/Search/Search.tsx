@@ -7,6 +7,8 @@ import { IPet } from "../Pet/PetProfile";
 function Search() {
   const [pets, setPets] = useState<IPet[] | null>(null);
 
+  //todo: dynamic pets collection height
+
   return (
     <div id="searchPage">
       <SearchForm setPets={setPets} />

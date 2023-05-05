@@ -5,10 +5,16 @@ import { Navigate } from "react-router-dom";
 interface routeFunctionProps {
   redirectRoute: string;
   children: JSX.Element;
+  onlyAdmin?: boolean;
 }
-function UserRoute({ redirectRoute, children }: routeFunctionProps) {
+function UserRoute({
+  redirectRoute,
+  children,
+  onlyAdmin = false,
+}: routeFunctionProps) {
   const { user } = useContext(UserContext) as UserContextType;
-  if (user) {
+  const securityCheck = onlyAdmin ? user && user.admin : user;
+  if (securityCheck) {
     return children;
   } else {
     return <Navigate to={redirectRoute} />;

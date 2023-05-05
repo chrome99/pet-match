@@ -7,7 +7,7 @@ import { UserContext, UserContextType } from "../UserContext";
 
 export type IPet = {
   id: string;
-  type: string;
+  type: "Dog" | "Cat";
   name: string;
   adoptionStatus: "Fostered" | "Adopted" | "Available";
   picture: string;
@@ -26,6 +26,7 @@ function PetProfile() {
   const { user, changeUser } = useContext(UserContext) as UserContextType;
 
   const [alert, setAlert] = useState("");
+  const [availableToUser, setAvailableToUser] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const [fostered, setFostered] = useState(false);
   const [adopted, setAdopted] = useState(false);
@@ -44,11 +45,18 @@ function PetProfile() {
         setPet(response.data);
         if (!user) return;
         if (user.pets.includes(id as string)) {
+          setAvailableToUser(true);
           if (response.data.adoptionStatus === "Fostered") {
             setFostered(true);
           } else if (response.data.adoptionStatus === "Adopted") {
             setAdopted(true);
           }
+        } else {
+          //if user does not own this pet, the pet is only available to the user only if
+          //the pet's status is "Available", which means the pet hasn't been adopted by someone else.
+          //Of course, there is also guarding in the backend, so that requests to adopt a pet that has
+          //already been adopted will be denied.
+          setAvailableToUser(response.data.adoptionStatus === "Available");
         }
       })
       .catch((error) => {
@@ -57,7 +65,7 @@ function PetProfile() {
   }, [id, user]);
 
   //this use effect runs after we get the pet from the database
-  useEffect(DidUserWishlistPet, [pet]);
+  useEffect(DidUserWishlistPet, [pet, user]);
 
   function transactPet(type: "adopt" | "foster", value: boolean) {
     if (!user) return;
@@ -189,13 +197,16 @@ function PetProfile() {
                 {wishlisted ? "Remove From Wishlist" : "Add To Wishlist"}
               </Button>
               <Button
-                className={adopted ? "d-none" : ""}
+                className={adopted || !availableToUser ? "d-none" : ""}
                 onClick={transactPet.bind(null, "foster", !fostered)}
               >
                 {/* unfoster : foster */}
                 {fostered ? "Return" : "Foster"}
               </Button>
-              <Button onClick={transactPet.bind(null, "adopt", !adopted)}>
+              <Button
+                className={!availableToUser ? "d-none" : ""}
+                onClick={transactPet.bind(null, "adopt", !adopted)}
+              >
                 {/* unadopt : adopt */}
                 {adopted ? "Return" : "Adopt"}
               </Button>
