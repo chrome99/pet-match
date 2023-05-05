@@ -7,7 +7,16 @@ const bcrypt = require("bcrypt");
 const { User } = require("./userSchema");
 const { Pet } = require("./petSchema");
 const { Wishlist } = require("./wishlistSchema");
-const auth = require("./middleware/auth");
+const { verifyToken, adminOnly } = require("./middleware/auth");
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: "dfdcu51jz",
+    api_key: "917322833162277",
+    api_secret: "cQttpRHOkf-IrdbEHGANNMB4ZUo"
+});
+const multer = require("multer");
+const storage = new multer.memoryStorage();
+const upload = multer({storage: storage});
 const URI = process.env.URI;
 const PORT = process.env.PORT;
 
@@ -25,11 +34,15 @@ app.use(cors({
   origin: 'http://localhost:3000'
 }));
 
-app.post("/auth", auth, (req, res) => {
+app.post("/auth", verifyToken, (req, res) => {
   res.status(200).send("Welcome!");
 });
 
-app.post("/pet/:id/adopt", auth, async (req, res) => {
+app.get("/admin", adminOnly, (req, res) => {
+    res.status(200).send("Welcome Admin!");
+})
+
+app.post("/pet/:id/adopt", verifyToken, async (req, res) => {
     let { type, value } = req.body;
     const petId = req.params.id;
     const userId = req.user.user_id;
@@ -80,6 +93,74 @@ app.post("/pet/:id/adopt", auth, async (req, res) => {
     else {
         return res.status(400).send("Invalid Type! (adopt / foster)");
     }
+})
+
+app.post("/pet", upload.single("pet_img"), (req, res) => {
+    const {type, name, adoptionStatus, height, weight,
+         color, bio, hypoallergnic, dietery, breed} = req.body;
+
+    if (!(type && name && adoptionStatus && height && weight
+        && color && bio && hypoallergnic && dietery && breed)) {
+        return res.status(400).send("All input is required");
+    }
+
+    const newPet = new Pet(req.body);
+
+    // Upload file / image
+    const b64 = Buffer.from(req.file.buffer).toString("base64");
+    const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+    cloudinary.uploader.upload(dataURI, {
+        public_id: newPet._id,
+        folder: 'pets'
+    })
+    .then((data) => {
+        newPet.picture = data.secure_url;
+        newPet.save()
+        .then(() => {
+            res.status(200).send(newPet);
+        })
+        .catch(err => {
+            console.log(err.message);
+            res.status(500).send(err.message);
+        })
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).send(err.message);
+    });
+})
+
+app.put("/pet/:id", upload.single("pet_img"), async (req, res) => {
+    const id = req.params.id;
+    const {type, name, adoptionStatus, height, weight,
+         color, bio, hypoallergnic, dietery, breed} = req.body;
+
+    const petToUpdate = await Pet.findById(id);
+
+    console.log(req.file);
+    if (req.file) {
+        // Upload file / image
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+        const data = await cloudinary.uploader.upload(dataURI, {
+            public_id: petToUpdate._id,
+            folder: 'pets'
+        })
+        petToUpdate.picture = data.secure_url;
+    }
+
+    if (type) {petToUpdate.type = type}
+    if (name) {petToUpdate.name = name}
+    if (adoptionStatus) {petToUpdate.adoptionStatus = adoptionStatus}
+    if (height) {petToUpdate.height = height}
+    if (weight) {petToUpdate.weight = weight}
+    if (color) {petToUpdate.color = color}
+    if (bio) {petToUpdate.bio = bio}
+    if (hypoallergnic) {petToUpdate.hypoallergnic = hypoallergnic}
+    if (dietery) {petToUpdate.dietery = dietery}
+    if (breed) {petToUpdate.breed = breed}
+
+    const result = await petToUpdate.save();
+    return res.status(200).send(result);
 })
 
 app.get("/pet/:id", (req, res) => {
@@ -201,7 +282,7 @@ app.get("/wishlist", async (req, res) => {
     }
 })
 
-app.put("/user/:id", auth, (req, res) => {
+app.put("/user/:id", verifyToken, (req, res) => {
     const { id } = req.params;
     const { firstName, lastName, email, phone, password, bio } = req.body;
     User.findById(id)
