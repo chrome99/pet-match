@@ -1,5 +1,23 @@
 const jwt = require("jsonwebtoken");
 const config = process.env;
+// const mongoose = require("mongoose");
+const { User } = require("../userSchema");
+const { ObjectId } = require("mongodb");
+
+async function adminOnly(req, res, next) {
+  const id = req.headers["admin"];
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).send("Invalid Id");
+  }
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(400).send("User Not Found");
+  }
+  if (user.admin !== true) {
+    return res.status(400).send("Access Denied");
+  }
+  return next();
+}
 
 function verifyToken(req, res, next) {
   const token = req.body.token || req.query.token || req.headers["x-access-token"];
@@ -16,4 +34,4 @@ function verifyToken(req, res, next) {
   return next();
 };
 
-module.exports = verifyToken;
+module.exports = {verifyToken, adminOnly};
