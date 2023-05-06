@@ -95,7 +95,7 @@ app.post("/pet/:id/adopt", verifyToken, async (req, res) => {
     }
 })
 
-app.post("/pet", upload.single("pet_img"), (req, res) => {
+app.post("/pet", verifyToken, adminOnly, upload.single("pet_img"), (req, res) => {
     const {type, name, adoptionStatus, height, weight,
          color, bio, hypoallergnic, dietery, breed} = req.body;
 
@@ -129,14 +129,13 @@ app.post("/pet", upload.single("pet_img"), (req, res) => {
     });
 })
 
-app.put("/pet/:id", upload.single("pet_img"), async (req, res) => {
+app.put("/pet/:id", verifyToken, adminOnly, upload.single("pet_img"), async (req, res) => {
     const id = req.params.id;
     const {type, name, adoptionStatus, height, weight,
          color, bio, hypoallergnic, dietery, breed} = req.body;
 
     const petToUpdate = await Pet.findById(id);
 
-    console.log(req.file);
     if (req.file) {
         // Upload file / image
         const b64 = Buffer.from(req.file.buffer).toString("base64");
@@ -280,6 +279,60 @@ app.get("/wishlist", async (req, res) => {
         const allFans = allPetWishes.map(wishlist => wishlist.userId)
         return res.status(200).send(allFans);
     }
+})
+
+app.get("/users", verifyToken, adminOnly, (req, res) => {
+    User.find()
+    .then(searchResult => {
+        return res.status(200).send(searchResult);
+    })
+    .catch(err => {
+        console.log(err.message);
+        res.status(500).send(err.message);
+    })
+})
+
+app.get("/user/:id", verifyToken, (req, res) => {
+    const { id } = req.params;
+    User.findById(id)
+    .then(searchResult => {
+        return res.status(200).send(searchResult);
+    })
+    .catch(err => {
+        console.log(err.message);
+        res.status(500).send(err.message);
+    })
+})
+
+//add / remove user from admins
+app.post("/adminuser", verifyToken, adminOnly, (req, res) => {
+    const { id, adminValue } = req.body;
+
+    if (adminValue === undefined) {
+        return res.status(400).send("adminValue Required");
+    }
+    if (typeof adminValue !== "boolean") {
+        return res.status(400).send("adminValue Should Be Boolean");
+    }
+    if (id === undefined) {
+        return res.status(400).send("id Required");
+    }
+    if (!ObjectId.isValid(id)) {
+        return res.status(400).send("Invalid Id");
+    }
+    
+
+    User.findById(id)
+    .then(user => {
+        user.admin = adminValue;
+        user.save().then(updatedUser => {
+            res.status(200).send(updatedUser);
+        })
+    })
+    .catch(err => {
+        console.log(err.message);
+        res.status(500).send(err.message);
+    })
 })
 
 app.put("/user/:id", verifyToken, (req, res) => {
