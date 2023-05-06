@@ -1,18 +1,40 @@
 #dashboardContainer {
     height: 95%;
-    width: 70%;
+    width: 90%;
 }
-#allPetsCollection {
-    height: 50%;
-    overflow-y: scroll;
+#dashboardHeading {
+    height: 10%;
 }
-#allPetsSpinnerDiv {
-    margin: auto;
-    width: fit-content;
+#petsAndUsersDiv{
+    display: flex;
+    height: 90%;
+}
+#managePets {
+    width: 60%;
+    height: 100%;
 }
 #managePetsHeading {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin: 0.5rem;
+    padding: 0.5rem;
+    height: 10%
+}
+#manageUsers {
+    width: 40%;
+    height: 100%;
+}
+#manageUsersHeading {
+    height: 10%
+}
+#managePetsHeading button {
+    height: 80%;
+    margin-right: 1rem;
+}
+#allPetsCollection, #allUsersCollection {
+    height: 90%;
+}
+#allPetsSpinnerDiv, #AllUsersSpinnerDiv {
+    margin: auto;
+    width: fit-content;
 }

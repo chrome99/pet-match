@@ -1,0 +1,14 @@
+.userCard {
+    background-color: #ededed;
+    border-radius: 1rem;
+    margin: 1rem 0rem;
+    padding: 1rem;
+    margin: 0.5rem;
+}
+.userCard:hover {
+    background-color: #D3D3D3;
+    cursor: pointer;
+}
+.userCardAdmin {
+    color: blue;
+}

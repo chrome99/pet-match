@@ -78,7 +78,11 @@ function PetForm({ modal, setModal, pet, setPet }: ManagePetModalProps) {
         ? "http://localhost:8080/pet/" + pet.id
         : "http://localhost:8080/pet",
       data: newPet,
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {
+        "Content-Type": "multipart/form-data",
+        admin: user.id,
+        "x-access-token": user.token,
+      },
     })
       .then(() => {
         console.log("Success!");
