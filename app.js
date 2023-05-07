@@ -6,6 +6,7 @@ const dotenv = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const { User } = require("./userSchema");
 const { Pet } = require("./petSchema");
+const { Message } = require("./messageSchema");
 const { Wishlist } = require("./wishlistSchema");
 const { verifyToken, adminOnly } = require("./middleware/auth");
 const cloudinary = require('cloudinary').v2;
@@ -19,14 +20,49 @@ const storage = new multer.memoryStorage();
 const upload = multer({storage: storage});
 const URI = process.env.URI;
 const PORT = process.env.PORT;
+const WEBSOCKETPORT = process.env.WEBSOCKETPORT;
 
 const app = express();
 
 app.use(express.json());
 
+
+const server = app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}...`)
+})
+
 mongoose.connect(URI)
-    .then((result) => console.log("connected to db"))
+    .then((result) => {console.log("connected to db"); connectToSocketIo();})
     .catch((err) => console.log(err));
+
+function connectToSocketIo() {
+    const io = require('socket.io')(server, {
+        cors: {
+          origin: "http://localhost:3000",
+          methods: ["GET", "POST"]
+        }
+      });
+    io.on("connection", (socket) => {
+        
+      // if message sent, send the message to everyone on a room chat
+      socket.on("sendMessage", (data) => {
+        console.log(data);
+        io.to(data.room).emit("sendMessage", data);
+        //add to db
+        const newMessage = new Message(data);
+        newMessage.save()
+        .catch(err => {
+            console.log(err);
+        })
+      })
+
+      // Join the user to a socket room
+      socket.on('joinRoom', (data) => {
+        console.log(data);
+        socket.join(data); 
+      });
+    });
+}
 
 const cors = require('cors');
 
@@ -40,6 +76,13 @@ app.post("/auth", verifyToken, (req, res) => {
 
 app.get("/admin", adminOnly, (req, res) => {
     res.status(200).send("Welcome Admin!");
+})
+
+//get messages by user id / room id (for now they are the same)
+app.get("/messages/:id", verifyToken, async (req, res) => {
+    const id = req.params.id;
+    result = await Message.find({room: id})
+    res.status(200).send(result);
 })
 
 app.post("/pet/:id/adopt", verifyToken, async (req, res) => {
@@ -434,7 +477,3 @@ app.post('/login', (req, res) => {
         res.status(500).send(err.message);
     })
 });
-
-app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}...`)
-})
