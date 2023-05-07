@@ -2,18 +2,25 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import "./UserProfile.css";
 import { Alert, Spinner, Button } from "react-bootstrap";
-import { IUser, UserContext, UserContextType } from "../UserContext";
-import { IPet } from "../Pet/PetProfile";
-import PetsCollection from "../Search/PetsCollection";
+import { IUser, UserContext, UserContextType } from "../../UserContext";
+import { IPet } from "../../Pet/PetProfile";
+import PetsCollection from "../../Search/PetsCollection";
 
 interface UserProfileProps {
   modal: boolean;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   user: IUser;
   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
+  setForceUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function UserProfile({ modal, setModal, user, setUser }: UserProfileProps) {
+function UserProfile({
+  modal,
+  setModal,
+  user,
+  setUser,
+  setForceUpdate,
+}: UserProfileProps) {
   //user is the user who's data is being shown, currentUser is the connected admin user looking at the data
   const { user: currentUser } = useContext(UserContext) as UserContextType;
   const [alert, setAlert] = useState("");
@@ -43,8 +50,6 @@ function UserProfile({ modal, setModal, user, setUser }: UserProfileProps) {
   function changeAdmin() {
     if (!currentUser) return;
 
-    console.log(user.id);
-
     axios
       .post(
         "http://localhost:8080/adminuser",
@@ -59,6 +64,7 @@ function UserProfile({ modal, setModal, user, setUser }: UserProfileProps) {
       .then((response) => {
         response.data.id = response.data._id;
         setUser(response.data);
+        setForceUpdate((prev) => !prev);
       })
       .catch((error) => {
         console.log(error.response.data);

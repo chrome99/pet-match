@@ -3,7 +3,7 @@ import { Form, Alert, Button, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import "./ManagePetModal.css";
 import { ManagePetModalProps } from "./ManagePetModal";
-import { UserContext, UserContextType } from "../UserContext";
+import { UserContext, UserContextType } from "../../UserContext";
 
 function PetForm({ modal, setModal, pet, setPet }: ManagePetModalProps) {
   const { user } = useContext(UserContext) as UserContextType;
@@ -85,8 +85,6 @@ function PetForm({ modal, setModal, pet, setPet }: ManagePetModalProps) {
       },
     })
       .then(() => {
-        console.log("Success!");
-
         //if edit mode, then notify dashboard that pet was edited so the collection should re-render!
         if (pet) {
           setPet("Pet Edited");

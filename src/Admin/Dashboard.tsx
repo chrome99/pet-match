@@ -5,9 +5,9 @@ import { IUser, UserContext, UserContextType } from "../UserContext";
 import { IPet } from "../Pet/PetProfile";
 import { Spinner, Button } from "react-bootstrap";
 import axios from "axios";
-import ManagePetModal from "./ManagePetModal";
-import UsersCollection from "./UsersCollection";
-import UserModal from "./UserModal";
+import ManagePetModal from "./Pets/ManagePetModal";
+import UsersCollection from "./Users/UsersCollection";
+import UserModal from "./Users/UserModal";
 
 function Dashboard() {
   //todo: fix change admin not updating bug
@@ -134,6 +134,7 @@ function Dashboard() {
         setModal={setUserModal}
         user={modalUser}
         setUser={setModalUser}
+        setForceUpdate={setForceUpdate}
       />
     </>
   );

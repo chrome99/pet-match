@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import "./ManagePetModal.css";
-import { IPet } from "../Pet/PetProfile";
+import { IPet } from "../../Pet/PetProfile";
 import PetForm from "./PetForm";
 
 export interface ManagePetModalProps {

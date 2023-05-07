@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./UsersCollection.css";
-import { IUser } from "../UserContext";
+import { IUser } from "../../UserContext";
 import UserCard from "./UserCard";
 
 interface UsersCollectionProps {

@@ -1,6 +1,6 @@
 import React from "react";
 import "./UserCard.css";
-import { IUser } from "../UserContext";
+import { IUser } from "../../UserContext";
 
 interface UserCardProps {
   user: IUser;
