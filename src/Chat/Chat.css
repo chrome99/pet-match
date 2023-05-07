@@ -1,0 +1,8 @@
+#chatContainer {
+    width: 70%;
+    height: 95%;
+}
+#allMessages {
+    height: 80%;
+    overflow-y: scroll;
+}
