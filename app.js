@@ -8,6 +8,7 @@ const { User } = require("./userSchema");
 const { Pet } = require("./petSchema");
 const { Message } = require("./messageSchema");
 const { Wishlist } = require("./wishlistSchema");
+const { Request } = require("./requestSchema");
 const { verifyToken, adminOnly } = require("./middleware/auth");
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
@@ -46,11 +47,12 @@ function connectToSocketIo() {
         
       // if message sent, send the message to everyone on a room chat
       socket.on("sendMessage", (data) => {
-        console.log(data);
-        io.to(data.room).emit("sendMessage", data);
         //add to db
         const newMessage = new Message(data);
         newMessage.save()
+        .then((result) => {
+            io.to(result.requestId).emit("sendMessage", result); //requestId is the room!
+        })
         .catch(err => {
             console.log(err);
         })
@@ -58,7 +60,6 @@ function connectToSocketIo() {
 
       // Join the user to a socket room
       socket.on('joinRoom', (data) => {
-        console.log(data);
         socket.join(data); 
       });
     });
@@ -78,10 +79,83 @@ app.get("/admin", adminOnly, (req, res) => {
     res.status(200).send("Welcome Admin!");
 })
 
-//get messages by user id / room id (for now they are the same)
+//update request state (open, close, unattended)
+//unattended means that the admins has abandoned the request
+app.put("/request", verifyToken, adminOnly, async (req, res) => {
+    const { id, value, adminId } = req.body;
+
+    //checking for adminId only if value is "open", because adminId is only required for opening / adopting a request
+    if (!(id && value)) {
+        return res.status(400).send("Invalid Body, Both id & value Are Required");
+    }
+    if (value === "open" && !adminId) {
+        return res.status(400).send("Invalid Body, adminId Is Required For value: open");
+    }
+    
+
+    const request = await Request.findById(id);
+    if (!request) {
+        return res.status(400).send("Request Not Found");
+    }
+
+    if (value === "open") {
+        request.adminId = adminId;
+        request.state = value;
+    }
+    else if (value === "closed") {
+        request.state = value;
+    }
+    else if (value === "unattended"){
+        request.adminId = "";
+        request.state = value;
+    }
+    else {
+        return res.status(400).send("Invalid value (open | closed | unattended)");
+    }
+
+    const result = await request.save();
+    res.status(200).send(result);
+})
+
+//get all requests handled by admin
+app.get("/requestadmin/:id", verifyToken, adminOnly, async (req, res) => {
+    const id = req.params.id;
+
+    const unattendedRequest = await Request.find({adminId: id});
+    res.status(200).send(unattendedRequest);
+})
+
+//get all requests made by user (get by user id)
+app.get("/request/:id", verifyToken, async (req, res) => {
+    const id = req.params.id;
+    const allUserRequests = await Request.find({userId: id});
+    res.status(200).send(allUserRequests);
+})
+
+//get all unattended requests
+app.get("/unattendedrequest", verifyToken, adminOnly, async (req, res) => {
+    const allUnattendedRequests = await Request.find({state: "unattended"});
+    res.status(200).send(allUnattendedRequests);
+})
+
+//post new request
+app.post("/request", verifyToken, async (req, res) => {
+    const { title, body, userId, userName } = req.body;
+    if (!(title && body && userId && userName)) {
+        return res.status(400).send("All input is required");
+    }
+
+    const newRequest = new Request({title: title, userId: userId, state: "unattended"})
+    const newFirstMsg = new Message({requestId: newRequest._id, userId: userId, userName: userName, value: body}) 
+    requestResult = await newRequest.save()
+    msgResult = await newFirstMsg.save()
+    res.status(200).send(requestResult);
+})
+
+//get messages by request id
 app.get("/messages/:id", verifyToken, async (req, res) => {
     const id = req.params.id;
-    result = await Message.find({room: id})
+    result = await Message.find({requestId: id})
     res.status(200).send(result);
 })
 
@@ -435,7 +509,7 @@ app.post('/register', (req, res) => {
         const newUser = new User(req.body);
         newUser.save()
         .then(result => {
-            const token = jwt.sign({ user_id: newUser._id, email }, process.env.TOKEN_KEY, { expiresIn: "2h" },);
+            const token = jwt.sign({ user_id: newUser._id, email }, process.env.TOKEN_KEY, { expiresIn: "1d" },);
             newUser.token = token;
             res.status(200).send(newUser);
         })
