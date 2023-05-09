@@ -10,7 +10,7 @@ import PetProfile from "./Pet/PetProfile";
 import Search from "./Search/Search";
 import Navbar from "./Navbar/Navbar";
 import Dashboard from "./Admin/Dashboard";
-import Chat from "./Chat/Chat";
+import Contact from "./Chat/Contact";
 
 function App() {
   const [user, setUser] = useState<IUser | null>(initUser);
@@ -53,21 +53,21 @@ function App() {
           />
           <Route path="/search" element={<Search />} />
           <Route
-            path="/chat"
+            path="/contact"
             element={
               <UserRoute redirectRoute={"/"}>
-                <Chat />
+                <Contact />
               </UserRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/chat/:adminRoomId"
             element={
               <UserRoute redirectRoute={"/"} onlyAdmin={true}>
-                <Chat />
+                <Requests />
               </UserRoute>
             }
-          />
+          /> */}
           <Route
             path="/dashboard"
             element={

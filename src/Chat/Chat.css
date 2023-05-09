@@ -1,8 +1,51 @@
 #chatContainer {
-    width: 70%;
-    height: 95%;
+    width: 68%;
+}
+#chatHeading {
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+#chatHeadingButtons button {
+    margin-left: 1rem;
+}
+#chatHeading h4 {
+    margin: 0;
+    max-width: 70%;
 }
 #allMessages {
-    height: 80%;
+    width: 100%;
+    height: 75%;
     overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.chatMessage {
+    background-color: #545AA7;
+    color: white;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    width: fit-content;
+}
+.receivedMessage {
+    background-color: #E5E4E2;
+    color: black;
+    align-self: flex-end;
+}
+.chatMessageDate {
+    font-size: 0.7rem;
+    margin-right: 0.5rem;
+}
+#chatForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 15%;
+}
+#chatForm form {
+    width: 100%;
 }

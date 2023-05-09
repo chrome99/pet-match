@@ -1,29 +1,32 @@
 import React, { useEffect, useContext, useState, useRef } from "react";
 import "./Chat.css";
-import { useParams } from "react-router";
 import { socket } from "./Socket";
 import { UserContext, UserContextType } from "../UserContext";
 import { Form, Button, InputGroup } from "react-bootstrap";
-import uniqid from "uniqid";
 import axios from "axios";
+import { Request } from "./Contact";
 
 type Message = {
-  _id: string;
-  room: string;
+  id?: string;
+  _id?: string;
+  requestId: string;
   userId: string;
   userName: string;
-  createdAt: Date;
   value: string;
+  madeByUser?: boolean;
+  createdAt?: Date;
 };
 
-function Chat() {
-  const { adminRoomId } = useParams();
+interface ChatProps {
+  currentRequest: Request;
+  updateCurrentRequest: Function;
+}
+
+function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
   const { user } = useContext(UserContext) as UserContextType;
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
-  const [msgInput, setMsgInput] = useState("asd");
+  const [msgInput, setMsgInput] = useState("");
   const allMessagesRef = useRef<null | HTMLDivElement>(null);
-  const roomId = adminRoomId ? adminRoomId : user?.id;
 
   useEffect(() => {
     if (!user) return;
@@ -32,26 +35,43 @@ function Chat() {
       if (!user) return;
 
       axios
-        .get("http://localhost:8080/messages/" + roomId, {
+        .get("http://localhost:8080/messages/" + currentRequest.id, {
           headers: { "x-access-token": user.token },
-        }) //room
+        })
         .then((response) => {
+          response.data.map((message: any) => {
+            const newMessage = message;
+            newMessage.id = message._id;
+            newMessage.madeByUser = message.userId === user.id;
+            if (newMessage.createdAt) {
+              newMessage.createdAt = new Date(message.createdAt.toString());
+            }
+            return newMessage;
+          });
+          const sender = response.data.findLast(
+            (message: any) => message.userId !== user.id
+          );
+          if (sender) {
+            currentRequest.senderName = sender.userName;
+          }
           setMessages(response.data);
         })
         .catch((error) => {
           console.log(error);
         });
     }
-    function onConnect() {
-      setIsConnected(true);
-    }
 
-    function onDisconnect() {
-      setIsConnected(false);
-    }
+    function onNewMsg(message: Message) {
+      if (!user) return;
+      if (currentRequest.senderName === undefined) {
+        currentRequest.senderName = message.userName;
+      }
 
-    function onNewMsg(message: any) {
-      console.log(message);
+      message.id = message._id;
+      message.madeByUser = message.userId === user.id;
+      if (message.createdAt) {
+        message.createdAt = new Date(message.createdAt.toString());
+      }
       setMessages((messages) => [...messages, message]);
     }
 
@@ -59,19 +79,15 @@ function Chat() {
 
     socket.connect();
 
-    socket.emit("joinRoom", roomId);
+    socket.emit("joinRoom", currentRequest.id);
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
     socket.on("sendMessage", onNewMsg);
 
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
       socket.off("sendMessage", onNewMsg);
       socket.disconnect();
     };
-  }, []);
+  }, [currentRequest, user]);
 
   useEffect(() => {
     allMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -82,40 +98,110 @@ function Chat() {
     if (!user) return;
 
     const newMsg: Message = {
-      _id: uniqid(),
-      room: roomId as string,
+      requestId: currentRequest.id,
       userId: user.id,
       userName: user.firstName + " " + user.lastName,
-      createdAt: new Date(),
       value: msgInput,
     };
     socket.emit("sendMessage", newMsg);
     setMsgInput("");
   }
 
+  function updateRequest(value: "open" | "closed" | "unattended") {
+    if (!user) return;
+
+    axios
+      .put(
+        "http://localhost:8080/request",
+        {
+          id: currentRequest.id,
+          adminId: user.id,
+          value: value,
+        },
+        {
+          headers: { admin: user.id, "x-access-token": user.token },
+        }
+      )
+      .then((response) => {
+        currentRequest.state = value;
+        updateCurrentRequest(value);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   return (
     <div id="chatContainer">
-      <h1>Chat</h1>
+      <div id="chatHeading">
+        <h4>
+          {currentRequest.senderName
+            ? "With: " + currentRequest.senderName.toString()
+            : ""}
+        </h4>
+        <div
+          id="chatHeadingButtons"
+          className={user && user.admin ? "" : "d-none"}
+        >
+          <Button
+            onClick={
+              () =>
+                currentRequest.state === "open"
+                  ? updateRequest("unattended") //open - leave / lock (extra button)
+                  : currentRequest.state === "closed"
+                  ? updateRequest("open") //locked - unlock
+                  : updateRequest("open") //unattended - engage
+            }
+          >
+            {currentRequest.state === "open"
+              ? "Leave"
+              : currentRequest.state === "closed"
+              ? "Unlock"
+              : "Engage"}
+          </Button>
+          <Button
+            className={currentRequest.state === "open" ? "" : "d-none"}
+            onClick={() => updateRequest("closed")}
+          >
+            Lock
+          </Button>
+        </div>
+      </div>
       <div id="allMessages">
         {messages.map((message) => {
           return (
-            <p key={message._id}>
-              {<b>{message.userName} :</b>} {message.value}
+            <p
+              className={`chatMessage ${
+                message.madeByUser === false ? "receivedMessage" : ""
+              }`}
+              key={message.id}
+            >
+              <span className="chatMessageDate">
+                {message.createdAt?.getHours().toString().padStart(2, "0") +
+                  ":" +
+                  message.createdAt?.getMinutes().toString().padStart(2, "0")}
+              </span>
+              {message.value}
             </p>
           );
         })}
         <div ref={allMessagesRef} />
       </div>
-      <Form onSubmit={sendMsg}>
-        <InputGroup>
-          <Form.Control
-            type="input"
-            value={msgInput}
-            onChange={(e) => setMsgInput(e.target.value)}
-          />
-          <Button type="submit">Send</Button>
-        </InputGroup>
-      </Form>
+      <div id="chatForm">
+        <Form onSubmit={sendMsg}>
+          <InputGroup>
+            <Form.Control
+              disabled={currentRequest.state !== "open"}
+              type="input"
+              value={msgInput}
+              onChange={(e) => setMsgInput(e.target.value)}
+            />
+            <Button type="submit" disabled={currentRequest.state !== "open"}>
+              Send
+            </Button>
+          </InputGroup>
+        </Form>
+      </div>
     </div>
   );
 }

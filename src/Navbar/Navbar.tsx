@@ -24,6 +24,7 @@ function Navbar() {
           <>
             <Link to="/mypets">My Pets</Link>
             <Link to="/profile">Profile</Link>
+            <Link to="/contact">Contact</Link>
           </>
         ) : null}
         {user && user.admin ? <Link to="/dashboard">Dashboard</Link> : null}

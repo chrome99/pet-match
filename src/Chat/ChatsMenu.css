@@ -1,0 +1,36 @@
+#chatsMenuContainer {
+    width: 28%;
+    height: 100%;
+}
+.chatMenuRequest {
+    margin-bottom: 1rem;
+    background-color: #E5E4E2;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+.chatMenuRequest:hover {
+    background-color: #D3D3D3;
+    cursor: pointer;
+}
+#chatsMenuAll {
+    height: 85%;
+    overflow-y: scroll;
+}
+.chatsMenuHeading {
+    font-size: 1.2rem;
+}
+.chatsMenuHeading:hover {
+    cursor: pointer;
+}
+.chatsMenuHeading .myArrow{
+    margin-right: 0.5rem;
+}
+#chatsMenuButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 15%;
+}
+#chatsMenuButton button {
+    margin: auto;
+}
