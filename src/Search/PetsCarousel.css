@@ -1,0 +1,16 @@
+#petsCarouselContainer {
+    width: 100%;
+}
+.petsCarouselCollection {
+    width: 85%;
+    margin: auto;
+}
+#petsCarouselContainer #petsCollectionContainer {
+    flex-wrap: nowrap;
+}
+.carousel-inner {
+    margin: auto;
+}
+.carousel-control-next, .carousel-control-prev {
+    width: 8%;
+}

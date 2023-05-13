@@ -11,6 +11,36 @@ import Search from "./Search/Search";
 import Navbar from "./Navbar/Navbar";
 import Dashboard from "./Admin/Dashboard";
 import Contact from "./Chat/Contact";
+import Faq from "./Faq/Faq";
+
+/*
+add readme
+scroll to top on route change (for example at the link in the end of homepage)
+update route guard to open login modal if not logged in
+
+css suggestions:
+make everything responsive
+bottom navbar (copy from other websites)
+animal svg loading animation
+add spinners where needed
+add validation to forms everywhere
+
+Home:
+  search section (cat, dog, all pets, use svgs)
+
+petCollection:
+  cards using grid, with heart buttons (wishlist), show only name
+  use shadows and shadow on hover
+
+search by default should show available pets
+add svgs where possible (hearts, pet icon, search icon)
+chat: change to accordion
+
+additional suggestions:
+use populate
+
+
+*/
 
 function App() {
   const [user, setUser] = useState<IUser | null>(initUser);
@@ -52,6 +82,7 @@ function App() {
             }
           />
           <Route path="/search" element={<Search />} />
+          <Route path="/faq" element={<Faq />} />
           <Route
             path="/contact"
             element={
@@ -60,14 +91,6 @@ function App() {
               </UserRoute>
             }
           />
-          {/* <Route
-            path="/chat/:adminRoomId"
-            element={
-              <UserRoute redirectRoute={"/"} onlyAdmin={true}>
-                <Requests />
-              </UserRoute>
-            }
-          /> */}
           <Route
             path="/dashboard"
             element={

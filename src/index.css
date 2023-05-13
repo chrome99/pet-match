@@ -1,10 +1,17 @@
 body, #root {
     margin: 0;
-    height: 100vh;
+    height: 100%;
     width: 100%;
+    font-family: "Trocchi";
 }
+
 #root {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.spinnerDiv {
+  margin: auto;
+  width: fit-content;
 }

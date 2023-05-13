@@ -22,7 +22,7 @@ function PetCard({ pet, onClickFunction }: PetCardProps) {
       ) : (
         <Link id={pet.id} className="petCard" to={`/pet/${pet.id}`}>
           <img className="petCardImg" src={pet.picture} alt={pet.name} />
-          <span>{`${pet.name} | ${pet.adoptionStatus}`}</span>
+          <span className="petCardText">{`${pet.name} | ${pet.adoptionStatus}`}</span>
         </Link>
       )}
     </>

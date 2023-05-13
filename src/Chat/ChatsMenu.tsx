@@ -5,7 +5,7 @@ import { Modal, Button, Collapse } from "react-bootstrap";
 import RequestForm from "./RequestForm";
 import { UserContext, UserContextType } from "../UserContext";
 
-function MyArrow({ value }: { value: boolean }) {
+export function MyArrow({ value }: { value: boolean }) {
   return (
     <span className="myArrow">
       {value ? (

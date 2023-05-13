@@ -15,8 +15,6 @@ export type Request = {
 };
 
 function Contact() {
-  // todo: quick update for request state using sockets
-
   const { user } = useContext(UserContext) as UserContextType;
 
   const [requests, setRequests] = useState<Request[] | null | undefined>(
@@ -25,63 +23,68 @@ function Contact() {
   const [currentRequest, setCurrentRequest] = useState<Request | null>(null);
 
   useEffect(() => {
-    if (!user) return;
+    async function getData() {
+      if (!user) return;
 
-    axios
-      .get(
-        `http://localhost:8080/${user.admin ? "requestadmin" : "request"}/${
-          user.id
-        }`,
-        {
-          headers: {
-            admin: user.admin ? user.id : "",
-            "x-access-token": user.token,
-          },
-        }
-      )
-      .then((response) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/${user.admin ? "requestadmin" : "request"}/${
+            user.id
+          }`,
+          {
+            headers: {
+              admin: user.admin ? user.id : "",
+              "x-access-token": user.token,
+            },
+          }
+        );
         response.data.map((request: any) => {
           return (request.id = request._id);
         });
-        setRequests((prev) => {
-          if (prev) {
-            return [...prev, ...response.data];
-          } else {
-            return response.data;
-          }
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
 
-    //only get all unattended requests for admins
-    if (!user.admin) {
-      return;
+        if (!user.admin) {
+          setRequests(response.data);
+          refreshCurentRequest();
+          return;
+        }
+
+        const adminResponse = await axios.get(
+          "http://localhost:8080/unattendedrequest",
+          {
+            headers: {
+              admin: user.admin ? user.id : "",
+              "x-access-token": user.token,
+            },
+          }
+        );
+        adminResponse.data.map((request: any) => {
+          return (request.id = request._id);
+        });
+        setRequests([...response.data, ...adminResponse.data]);
+        refreshCurentRequest();
+      } catch (error) {
+        console.log(error);
+      }
     }
 
-    axios
-      .get("http://localhost:8080/unattendedrequest", {
-        headers: {
-          admin: user.admin ? user.id : "",
-          "x-access-token": user.token,
-        },
-      })
-      .then((response) => {
-        response.data.map((request: any) => {
-          return (request.id = request._id);
+    function refreshCurentRequest() {
+      if (requests) {
+        setCurrentRequest((prev) => {
+          if (prev === null) return null;
+          const i = requests.findIndex((req) => req.id === prev.id);
+          return requests[i];
         });
-        setRequests((prev) => {
-          if (prev) {
-            return [...prev, ...response.data];
-          } else {
-            return response.data;
-          }
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      }
+    }
+
+    getData();
+
+    const serverInterval = setInterval(() => {
+      getData();
+    }, 10000);
+    return () => {
+      clearInterval(serverInterval);
+    };
   }, [user]);
 
   function updateCurrentRequest(value: "open" | "closed" | "unattended") {
