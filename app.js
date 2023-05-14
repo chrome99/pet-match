@@ -58,6 +58,42 @@ function connectToSocketIo() {
         })
       })
 
+      socket.on("changeReqState", async (data) => {
+        const { id, value, adminId } = data;
+
+        //checking for adminId only if value is "open", because adminId is only required for opening / adopting a request
+        if (!(id && value)) {
+            throw Error("Invalid Body, Both id & value Are Required");
+        }
+        if (value === "open" && !adminId) {
+            throw Error("Invalid Body, adminId Is Required For value: open");
+        }
+        
+    
+        const request = await Request.findById(id);
+        if (!request) {
+            throw Error("Request Not Found");
+        }
+    
+        if (value === "open") {
+            request.adminId = adminId;
+            request.state = value;
+        }
+        else if (value === "closed") {
+            request.state = value;
+        }
+        else if (value === "unattended"){
+            request.adminId = "";
+            request.state = value;
+        }
+        else {
+            throw Error("Invalid value (open | closed | unattended)");
+        }
+    
+        const result = await request.save();
+        io.to(id).emit("changeReqState", value);
+      })
+
       // Join the user to a socket room
       socket.on('joinRoom', (data) => {
         socket.join(data); 
@@ -289,6 +325,18 @@ app.get("/pet/:id", (req, res) => {
         console.log(err.message);
         res.status(500).send(err.message);
     })
+})
+
+app.get("/recentpets", (req, res) => {
+    const { limit } = req.query;
+    Pet.find().sort({ createdAt: -1 }).limit(limit)
+    .then((recentPets) => {
+        return res.status(200).send(recentPets);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send(err.message);
+    });
 })
 
 //gets multiple pets by array of ids
