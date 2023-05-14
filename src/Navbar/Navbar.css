@@ -44,6 +44,9 @@
     width: 100%; 
     left: 0; 
 }
+#nav-dropdown {
+    color: black;
+}
 @media (max-width: 630px) {
     #myNavbar {
         flex-direction: column;

@@ -5,7 +5,7 @@ import {
   IUser,
   IUpdateUser,
 } from "../UserContext";
-import { Form, Alert, Button, Spinner, Row, Col } from "react-bootstrap";
+import { Form, Alert, Button, Spinner, Row, Col, Fade } from "react-bootstrap";
 import axios from "axios";
 import "./Profile.css";
 
@@ -23,6 +23,7 @@ function Profile() {
   const [alert, setAlert] = useState("");
   const [spinner, setSpinner] = useState(false);
   const [confirmPass, setConfirmPass] = useState(false);
+  const [confirmPassDisabled, setConfirmPassDisabled] = useState(true);
 
   function saveChanges() {
     if (!user) return; //unnecessary double check so typescript will leave me alone (user?)
@@ -109,8 +110,9 @@ function Profile() {
 
   return (
     <div id="profileContainer">
-      <h1>Profile</h1>
+      <div className="heading">Profile</div>
       <Form>
+        <h1>User Information</h1>
         <Row>
           <Col>
             <Form.Group className="mb-3" controlId="formFName">
@@ -133,7 +135,16 @@ function Profile() {
             </Form.Group>
           </Col>
         </Row>
+        <Form.Group className="mb-3" controlId="formBio">
+          <Form.Label>Bio</Form.Label>
+          <Form.Control
+            as="textarea"
+            value={bioInput}
+            onChange={(e) => setBioInput(e.target.value)}
+          />
+        </Form.Group>
 
+        <h1>Communication & Security</h1>
         <Row>
           <Col>
             <Form.Group className="mb-3" controlId="formEmail">
@@ -169,30 +180,27 @@ function Profile() {
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group
-              className={`mb-3 ${!confirmPass && "d-none"}`}
-              controlId="formConfirmPassword"
-            >
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                value={verPasswordInput}
-                onChange={(e) => setVerPasswordInput(e.target.value)}
-              />
+            <Form.Group className="mb-3" controlId="formConfirmPassword">
+              <Fade
+                in={confirmPass}
+                onEntering={() => setConfirmPassDisabled(false)}
+                onExited={() => setConfirmPassDisabled(true)}
+              >
+                <div>
+                  <Form.Label>Confirm Password</Form.Label>
+                  <Form.Control
+                    disabled={confirmPassDisabled}
+                    type="password"
+                    value={verPasswordInput}
+                    onChange={(e) => setVerPasswordInput(e.target.value)}
+                  />
+                </div>
+              </Fade>
             </Form.Group>
           </Col>
         </Row>
 
-        <Form.Group className="mb-3" controlId="formBio">
-          <Form.Label>Bio</Form.Label>
-          <Form.Control
-            as="textarea"
-            value={bioInput}
-            onChange={(e) => setBioInput(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group className={`text-center`} controlId="formAlert">
+        <Form.Group className={`text-center mb-3`} controlId="formAlert">
           <Alert
             variant="danger"
             dismissible={true}
@@ -203,9 +211,9 @@ function Profile() {
           </Alert>
         </Form.Group>
 
-        <Form.Group className="text-center" controlId="formBtn">
+        <Form.Group className="text-center mb-3" controlId="formBtn">
           <Button
-            variant="primary"
+            variant="warning"
             type="submit"
             onClick={(e) => {
               e.preventDefault();

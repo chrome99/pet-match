@@ -1,13 +1,14 @@
 #contactContainer {
-    height: 95%;
-    width: 70%;
-}
-#contactHeading {
-    height: 10%;
-    margin: 0;
+    width: 100%;
+    padding: 2rem 5%;
 }
 #chatsMenuAndChatContainer {
-    height: 90%;
     display: flex;
     justify-content: space-between;
+}
+@media (max-width: 780px) {
+    #chatsMenuAndChatContainer {
+        flex-direction: column;
+        justify-content: center;
+    }
 }

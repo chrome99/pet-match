@@ -12,6 +12,10 @@ h3 {
 .adminStyling {
     color: blue;
 }
-#userPetsCollection {
-    max-height: 350px;
+#userPetsCollection #petsCollectionContainer {
+    max-height: 370px;
+}
+#userPetsCollection .petCard {
+    width: 200px;
+    height: 300px;
 }

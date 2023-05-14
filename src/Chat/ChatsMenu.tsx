@@ -26,7 +26,7 @@ interface ChatMenuProps {
   setRequests: React.Dispatch<
     React.SetStateAction<Request[] | null | undefined>
   >;
-  setCurrentRequest: React.Dispatch<React.SetStateAction<Request | null>>;
+  setCurrentRequest: React.Dispatch<React.SetStateAction<Request | undefined>>;
 }
 function ChatsMenu({
   requests,
@@ -60,7 +60,7 @@ function ChatsMenu({
               onClick={() => setViewUnattendedRequests((prev) => !prev)}
             >
               <MyArrow value={viewUnattendedRequests} />
-              Unattended
+              New
             </div>
             <Collapse in={viewUnattendedRequests}>
               <div>
@@ -141,6 +141,7 @@ function ChatsMenu({
         </div>
         <div id="chatsMenuButton">
           <Button
+            variant="warning"
             className={user && user.admin ? "d-none" : ""}
             onClick={() => setModal(true)}
           >

@@ -1,6 +1,10 @@
 #chatsMenuContainer {
-    width: 28%;
-    height: 100%;
+    width: 25%;
+    margin-right: 1rem;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .chatMenuRequest {
     margin-bottom: 1rem;
@@ -13,7 +17,6 @@
     cursor: pointer;
 }
 #chatsMenuAll {
-    height: 85%;
     overflow-y: scroll;
 }
 .chatsMenuHeading {
@@ -26,11 +29,20 @@
     margin-right: 0.5rem;
 }
 #chatsMenuButton {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 15%;
+    align-self: center;
+    margin-bottom: 2.5rem;
 }
 #chatsMenuButton button {
     margin: auto;
+}
+@media (max-width: 780px) {
+    #chatsMenuContainer {
+        margin-bottom: 2rem;
+        height: fit-content;
+        max-height: 700px;
+        width: 100%;
+    }
+    #chatsMenuButton {
+        margin-top: 2rem;
+    }
 }

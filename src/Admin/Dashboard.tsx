@@ -3,7 +3,7 @@ import "./Dashboard.css";
 import PetsCollection from "../Search/PetsCollection";
 import { IUser, UserContext, UserContextType } from "../UserContext";
 import { IPet } from "../Pet/PetProfile";
-import { Spinner, Button } from "react-bootstrap";
+import { Spinner, Button, Tabs, Tab } from "react-bootstrap";
 import axios from "axios";
 import ManagePetModal from "./Pets/ManagePetModal";
 import UsersCollection from "./Users/UsersCollection";
@@ -65,30 +65,29 @@ function Dashboard() {
   return (
     <>
       <div id="dashboardContainer">
-        <div id="dashboardHeading">
-          <h1>Admin Dashboard</h1>
-        </div>
-        <div id="petsAndUsersDiv">
-          <div id="managePets">
-            <div id="managePetsHeading">
-              <h2>Pets</h2>
-              <Button
-                onClick={() => {
-                  setModalPet(null);
-                  setManagePetModal(true);
-                }}
-              >
-                Add Pet
-              </Button>
-            </div>
-            {allPetsList === undefined ? ( //if undefined (did not get data from the server yet)
-              <div id="AllPetsSpinnerDiv">
-                <Spinner animation="border" role="status" />
+        <div className="heading">Admin Dashboard</div>
+        <Tabs defaultActiveKey="pets" justify>
+          <Tab eventKey="pets" title="Pets">
+            <div id="managePets">
+              <div id="managePetsHeading">
+                <h2>Pets</h2>
+                <Button
+                  variant="warning"
+                  onClick={() => {
+                    setModalPet(null);
+                    setManagePetModal(true);
+                  }}
+                >
+                  Add Pet
+                </Button>
               </div>
-            ) : allPetsList === null ? (
-              "There Are Currently No Pets On This Website."
-            ) : (
-              <div id="allPetsCollection">
+              {allPetsList === undefined ? ( //if undefined (did not get data from the server yet)
+                <div className="spinnerDiv">
+                  <Spinner animation="border" role="status" />
+                </div>
+              ) : allPetsList === null ? (
+                "There Are Currently No Pets On This Website."
+              ) : (
                 <PetsCollection
                   pets={allPetsList}
                   onClickFunction={(pet) => {
@@ -96,21 +95,21 @@ function Dashboard() {
                     setManagePetModal(true);
                   }}
                 />
-              </div>
-            )}
-          </div>
-          <div id="manageUsers">
-            <div id="manageUsersHeading">
-              <h2>Users</h2>
+              )}
             </div>
-            {usersList === undefined ? ( //if undefined (did not get data from the server yet)
-              <div id="AllUsersSpinnerDiv">
-                <Spinner animation="border" role="status" />
+          </Tab>
+          <Tab eventKey="users" title="Users">
+            <div id="manageUsers">
+              <div id="manageUsersHeading">
+                <h2>Users</h2>
               </div>
-            ) : usersList === null ? (
-              "Error Fetching Data."
-            ) : (
-              <div id="allUsersCollection">
+              {usersList === undefined ? ( //if undefined (did not get data from the server yet)
+                <div className="spinnerDiv">
+                  <Spinner animation="border" role="status" />
+                </div>
+              ) : usersList === null ? (
+                "Error Fetching Data."
+              ) : (
                 <UsersCollection
                   users={usersList}
                   onClickFunction={(user) => {
@@ -118,10 +117,10 @@ function Dashboard() {
                     setUserModal(true);
                   }}
                 />
-              </div>
-            )}
-          </div>
-        </div>
+              )}
+            </div>
+          </Tab>
+        </Tabs>
       </div>
       <ManagePetModal
         modal={managePetModal}

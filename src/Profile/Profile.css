@@ -1,6 +1,14 @@
 #profileContainer {
-    width: 70%;
-    height: 95%;
+    width: 100%;
+    padding: 2rem 5%;
+    margin-bottom: 4rem;
+}
+#profileContainer h1 {
+    margin-top: 2rem;
+}
+#profileContainer textarea {
+    height: 150px;
+    resize: none;
 }
 #submitSpinner {
     margin-right: 0.5rem;

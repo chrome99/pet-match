@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext, UserContextType } from "../UserContext";
 import { Button, Spinner } from "react-bootstrap";
-import PetsCollection from "../Search/PetsCollection";
 import PetsCarousel from "../Search/PetsCarousel";
 import "./Home.css";
 import axios from "axios";

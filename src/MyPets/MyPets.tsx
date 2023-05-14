@@ -62,30 +62,28 @@ function MyPets() {
 
   return (
     <div id="myPetsContainer">
-      <h1>My Pets</h1>
+      <div className="heading">My Pets</div>
       {myPetsList === undefined || savedPetsList === undefined ? ( //if undefined (did not get data from the server yet)
-        <div id="myPetsSpinnerDiv">
+        <div className="spinnerDiv">
           <Spinner animation="border" role="status" />
         </div>
       ) : (
-        <div id="myPetsCollectionContainer">
-          <Tabs justify id="uncontrolled-tab-example" className="mb-3">
-            <Tab eventKey="myPetsTab" title="My Pets">
-              {myPetsList ? (
-                <PetsCollection pets={myPetsList} />
-              ) : (
-                "You currently do not own or foster any pets."
-              )}
-            </Tab>
-            <Tab eventKey="savedPetsTab" title="Saved Pets">
-              {savedPetsList ? (
-                <PetsCollection pets={savedPetsList} />
-              ) : (
-                "You currently do not have any saved pets."
-              )}
-            </Tab>
-          </Tabs>
-        </div>
+        <Tabs justify id="uncontrolled-tab-example" className="mb-3">
+          <Tab eventKey="myPetsTab" title="My Pets">
+            {myPetsList ? (
+              <PetsCollection pets={myPetsList} />
+            ) : (
+              "You currently do not own or foster any pets."
+            )}
+          </Tab>
+          <Tab eventKey="savedPetsTab" title="Saved Pets">
+            {savedPetsList ? (
+              <PetsCollection pets={savedPetsList} />
+            ) : (
+              "You currently do not have any saved pets."
+            )}
+          </Tab>
+        </Tabs>
       )}
     </div>
   );

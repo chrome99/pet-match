@@ -14,31 +14,23 @@ import Contact from "./Chat/Contact";
 import Faq from "./Faq/Faq";
 
 /*
-add readme
-scroll to top on route change (for example at the link in the end of homepage)
 update route guard to open login modal if not logged in
+fix chats
+bottom navbar (copy from other websites)
+add pagination to petsCollection, also use shadows and shadow on hover
+
+
 
 css suggestions:
-make everything responsive
-bottom navbar (copy from other websites)
 animal svg loading animation
 add spinners where needed
-add validation to forms everywhere
-
-Home:
-  search section (cat, dog, all pets, use svgs)
-
-petCollection:
-  cards using grid, with heart buttons (wishlist), show only name
-  use shadows and shadow on hover
-
+maybe add bootstrap validation to forms everywhere
 search by default should show available pets
-add svgs where possible (hearts, pet icon, search icon)
-chat: change to accordion
 
 additional suggestions:
+add readme
 use populate
-
+scroll to top on route change (for example at the link in the end of homepage)
 
 */
 

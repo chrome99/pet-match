@@ -124,7 +124,7 @@ function SignupTab({ setModal }: MyModalProps) {
 
       <Form.Group className="text-center" controlId="formBtn">
         <Button
-          variant="primary"
+          variant="warning"
           type="submit"
           onClick={(e) => {
             e.preventDefault();

@@ -174,47 +174,65 @@ function PetProfile() {
     <>
       {pet ? (
         <div id={id} className="petContainer">
-          <img id="petImg" src={pet.picture} alt={pet.name} />
-          <h1>{pet.name}</h1>
-          <div id="petInfo">
-            <div>Adoption Status: {pet.adoptionStatus}</div>
-            <div>Type: {pet.type}</div>
-            <div>Breed: {pet.breed}</div>
-            <div>Color: {pet.color}</div>
-            <div>Height: {pet.height}</div>
-            <div>Weight: {pet.weight}</div>
-            <div>Bio: {pet.bio ? pet.bio : "None"}</div>
-            <div>Hypoallergnic: {pet.hypoallergnic ? "Yes" : "No"}</div>
-            <div>
-              Dietary Restrictions:{" "}
-              {pet.dietery.length > 0 ? pet.dietery : "None"}
+          <div id="petHeading">
+            <img id="petImg" src={pet.picture} alt={pet.name} />
+            <div id="petHeadingInfo">
+              <div>{pet.name}</div>
+              <div id="petHeadingInfoStatus">{pet.adoptionStatus}</div>
             </div>
           </div>
+          <div id="petInfo">
+            <li>Adoption Status: {pet.adoptionStatus}</li>
+            <li>Type: {pet.type}</li>
+            <li>Breed: {pet.breed}</li>
+            <li>Color: {pet.color}</li>
+            <li>Height: {pet.height}</li>
+            <li>Weight: {pet.weight}</li>
+            <li>Hypoallergnic: {pet.hypoallergnic ? "Yes" : "No"}</li>
+            <li>
+              Dietary Restrictions:{" "}
+              {pet.dietery.length > 0 ? pet.dietery : "None"}
+            </li>
+          </div>
 
-          {petBtns && user ? (
-            <div id="petButtons">
-              <Button onClick={wishlisted ? removeFromWishlist : addToWishlist}>
-                {wishlisted ? "Remove From Wishlist" : "Add To Wishlist"}
-              </Button>
-              <Button
-                className={adopted || !availableToUser ? "d-none" : ""}
-                onClick={transactPet.bind(null, "foster", !fostered)}
-              >
-                {/* unfoster : foster */}
-                {fostered ? "Return" : "Foster"}
-              </Button>
-              <Button
-                className={!availableToUser ? "d-none" : ""}
-                onClick={transactPet.bind(null, "adopt", !adopted)}
-              >
-                {/* unadopt : adopt */}
-                {adopted ? "Return" : "Adopt"}
-              </Button>
-            </div>
-          ) : user ? ( // if user true and petBtns false
-            <Spinner animation="border" role="status" />
-          ) : //if user null and petBtns false
-          null}
+          <div id="petBio">
+            <h1>Bio</h1>
+            {pet.bio ? pet.bio : "This pet Currently does not have a bio."}
+          </div>
+
+          <div id="petButtons">
+            {petBtns && user ? (
+              <>
+                <Button
+                  variant="warning"
+                  onClick={wishlisted ? removeFromWishlist : addToWishlist}
+                >
+                  {wishlisted ? "Remove From Wishlist" : "Add To Wishlist"}
+                </Button>
+                <Button
+                  variant="warning"
+                  className={adopted || !availableToUser ? "d-none" : ""}
+                  onClick={transactPet.bind(null, "foster", !fostered)}
+                >
+                  {/* unfoster : foster */}
+                  {fostered ? "Return" : "Foster"}
+                </Button>
+                <Button
+                  variant="warning"
+                  className={!availableToUser ? "d-none" : ""}
+                  onClick={transactPet.bind(null, "adopt", !adopted)}
+                >
+                  {/* unadopt : adopt */}
+                  {adopted ? "Return" : "Adopt"}
+                </Button>
+              </>
+            ) : user ? ( // if user true and petBtns false
+              <div className="spinnerDiv">
+                <Spinner animation="border" role="status" />
+              </div>
+            ) : //if user null and petBtns false
+            null}
+          </div>
           <Alert
             className="mb-0"
             variant="danger"
@@ -226,7 +244,7 @@ function PetProfile() {
           </Alert>
         </div>
       ) : (
-        <div id="petSpinnerDiv">
+        <div className="spinnerDiv">
           <Spinner animation="border" role="status" />
         </div>
       )}

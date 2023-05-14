@@ -4,7 +4,7 @@ import ChatsMenu from "./ChatsMenu";
 import Chat from "./Chat";
 import axios from "axios";
 import { UserContext, UserContextType } from "../UserContext";
-import { Spinner } from "react-bootstrap";
+import { Spinner, Tabs, Tab } from "react-bootstrap";
 
 export type Request = {
   id: string;
@@ -20,7 +20,9 @@ function Contact() {
   const [requests, setRequests] = useState<Request[] | null | undefined>(
     undefined
   );
-  const [currentRequest, setCurrentRequest] = useState<Request | null>(null);
+  const [currentRequest, setCurrentRequest] = useState<Request | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     async function getData() {
@@ -70,7 +72,7 @@ function Contact() {
     function refreshCurentRequest() {
       if (requests) {
         setCurrentRequest((prev) => {
-          if (prev === null) return null;
+          if (prev === undefined) return undefined;
           const i = requests.findIndex((req) => req.id === prev.id);
           return requests[i];
         });
@@ -116,9 +118,11 @@ function Contact() {
 
   return (
     <div id="contactContainer">
-      <h1 id="contactHeading">Contact</h1>
+      <div className="heading">Contact</div>
       {requests === undefined ? (
-        <Spinner animation="border" role="status" />
+        <div className="spinnerDiv">
+          <Spinner animation="border" role="status" />
+        </div>
       ) : (
         <div id="chatsMenuAndChatContainer">
           <ChatsMenu
@@ -126,14 +130,10 @@ function Contact() {
             setRequests={setRequests}
             setCurrentRequest={setCurrentRequest}
           />
-          {currentRequest ? (
-            <Chat
-              currentRequest={currentRequest}
-              updateCurrentRequest={updateCurrentRequest}
-            />
-          ) : (
-            ""
-          )}
+          <Chat
+            currentRequest={currentRequest}
+            updateCurrentRequest={updateCurrentRequest}
+          />
         </div>
       )}
     </div>

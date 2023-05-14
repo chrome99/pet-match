@@ -251,7 +251,7 @@ function PetForm({ modal, setModal, pet, setPet }: ManagePetModalProps) {
 
         <Form.Group className="text-center" controlId="formBtn">
           <Button
-            variant="primary"
+            variant="warning"
             type="submit"
             onClick={(e) => {
               e.preventDefault();

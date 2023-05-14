@@ -1,40 +1,36 @@
 #dashboardContainer {
-    height: 95%;
-    width: 90%;
-}
-#dashboardHeading {
-    height: 10%;
-}
-#petsAndUsersDiv{
-    display: flex;
-    height: 90%;
-}
-#managePets {
-    width: 60%;
-    height: 100%;
+    width: 100%;
+    padding: 2rem 5%;
 }
 #managePetsHeading {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     padding: 0.5rem;
-    height: 10%
-}
-#manageUsers {
-    width: 40%;
-    height: 100%;
-}
-#manageUsersHeading {
-    height: 10%
 }
 #managePetsHeading button {
-    height: 80%;
     margin-right: 1rem;
 }
-#allPetsCollection, #allUsersCollection {
-    height: 90%;
+#dashboardContainer .petCard {
+    width: 200px;
+    height: 300px;
 }
-#allPetsSpinnerDiv, #AllUsersSpinnerDiv {
-    margin: auto;
-    width: fit-content;
+@media (max-width: 480px) {
+    #dashboardContainer #usersCollectionContainer {
+        max-height: 400px;
+    }
+    #dashboardContainer #petsCollectionContainer {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        max-height: 400px;
+        margin-bottom: 0;
+    }
+    #dashboardContainer .petCardImg {
+        display: none;
+    }
+    #dashboardContainer .petCard {
+        width: 100%;
+        height: fit-content;
+        margin: 0.5rem 0rem;
+    }
 }

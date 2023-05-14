@@ -35,17 +35,12 @@ function Navbar() {
           <Link className="navbarLink" to="/search">
             Search
           </Link>
-          <Link className="navbarLink" to="/Faq">
-            FAQ
-          </Link>
           {user ? (
             <Link className="navbarLink" to="/contact">
               Contact
             </Link>
           ) : null}
-
-          {/* {user && user.admin ? <Link to="/dashboard">DASHBOARD</Link> : null} */}
-          {user && user.admin ? (
+          {user ? (
             <NavDropdown
               drop="down-centered"
               title={
@@ -57,7 +52,7 @@ function Navbar() {
                   alt="User"
                 />
               }
-              id="basic-nav-dropdown"
+              id="nav-dropdown"
             >
               <NavDropdown.Item
                 as="button"
@@ -68,7 +63,7 @@ function Navbar() {
               <NavDropdown.Item as="button" onClick={() => navigate("/mypets")}>
                 My Pets
               </NavDropdown.Item>
-              {user?.admin ? (
+              {user.admin ? (
                 <NavDropdown.Item
                   as="button"
                   onClick={() => navigate("/dashboard")}

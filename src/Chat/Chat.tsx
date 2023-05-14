@@ -18,7 +18,7 @@ type Message = {
 };
 
 interface ChatProps {
-  currentRequest: Request;
+  currentRequest?: Request;
   updateCurrentRequest: Function;
 }
 
@@ -29,10 +29,10 @@ function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
   const allMessagesRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !currentRequest) return;
 
     function fetchData() {
-      if (!user) return;
+      if (!user || !currentRequest) return;
 
       axios
         .get("http://localhost:8080/messages/" + currentRequest.id, {
@@ -62,7 +62,7 @@ function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
     }
 
     function onNewMsg(message: Message) {
-      if (!user) return;
+      if (!user || !currentRequest) return;
       if (currentRequest.senderName === undefined) {
         currentRequest.senderName = message.userName;
       }
@@ -90,12 +90,13 @@ function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
   }, [currentRequest, user]);
 
   useEffect(() => {
+    if (!currentRequest) return;
     allMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   function sendMsg(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !currentRequest) return;
 
     const newMsg: Message = {
       requestId: currentRequest.id,
@@ -108,7 +109,7 @@ function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
   }
 
   function updateRequest(value: "open" | "closed" | "unattended") {
-    if (!user) return;
+    if (!user || !currentRequest) return;
 
     axios
       .put(
@@ -135,8 +136,8 @@ function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
     <div id="chatContainer">
       <div id="chatHeading">
         <h4>
-          {currentRequest.senderName
-            ? "With: " + currentRequest.senderName.toString()
+          {currentRequest?.senderName
+            ? currentRequest.senderName.toString()
             : ""}
         </h4>
         <div
@@ -144,23 +145,26 @@ function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
           className={user && user.admin ? "" : "d-none"}
         >
           <Button
+            className={currentRequest === undefined ? "d-none" : ""}
+            variant="warning"
             onClick={
               () =>
-                currentRequest.state === "open"
+                currentRequest?.state === "open"
                   ? updateRequest("unattended") //open - leave / lock (extra button)
-                  : currentRequest.state === "closed"
+                  : currentRequest?.state === "closed"
                   ? updateRequest("open") //locked - unlock
                   : updateRequest("open") //unattended - engage
             }
           >
-            {currentRequest.state === "open"
+            {currentRequest?.state === "open"
               ? "Leave"
-              : currentRequest.state === "closed"
+              : currentRequest?.state === "closed"
               ? "Unlock"
               : "Engage"}
           </Button>
           <Button
-            className={currentRequest.state === "open" ? "" : "d-none"}
+            variant="warning"
+            className={currentRequest?.state === "open" ? "" : "d-none"}
             onClick={() => updateRequest("closed")}
           >
             Lock
@@ -168,6 +172,11 @@ function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
         </div>
       </div>
       <div id="allMessages">
+        <img
+          id="allMessagesBackground"
+          src={require("../Images/chat_pattern.jpg")}
+          alt="pet pattern"
+        />
         {messages.map((message) => {
           return (
             <p
@@ -191,12 +200,16 @@ function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
         <Form onSubmit={sendMsg}>
           <InputGroup>
             <Form.Control
-              disabled={currentRequest.state !== "open"}
+              disabled={currentRequest?.state !== "open"}
               type="input"
               value={msgInput}
               onChange={(e) => setMsgInput(e.target.value)}
             />
-            <Button type="submit" disabled={currentRequest.state !== "open"}>
+            <Button
+              variant="warning"
+              type="submit"
+              disabled={currentRequest?.state !== "open"}
+            >
               Send
             </Button>
           </InputGroup>

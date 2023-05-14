@@ -1,7 +1,6 @@
 #searchPage {
-    height: 95%;
-    width: 70%;
+    width: 100%;
 }
-#searchResultsContainer {
-    height: 50%;
+#searchPage #petsCollectionContainer {
+    padding: 2rem 5%;
 }

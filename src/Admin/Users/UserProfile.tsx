@@ -78,7 +78,7 @@ function UserProfile({
           {user.firstName} {user.lastName}
         </h1>
         {currentUser && user.id !== currentUser.id ? (
-          <Button onClick={changeAdmin}>
+          <Button variant="warning" onClick={changeAdmin}>
             {user.admin ? "Remove From Admins" : "Add To Admins"}
           </Button>
         ) : (
@@ -112,7 +112,9 @@ function UserProfile({
       </div>
       <h3>Pets</h3>
       {userPets === undefined ? (
-        <Spinner animation="border" role="status" />
+        <div className="spinnerDiv">
+          <Spinner animation="border" role="status" />
+        </div>
       ) : userPets === null ? (
         "This user currently does not own any pets."
       ) : (

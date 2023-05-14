@@ -75,7 +75,7 @@ function SearchForm({ setPets }: SearchFormProps) {
 
   return (
     <div id="searchContainer">
-      <h1>Search</h1>
+      <div className="heading">Search</div>
       <Form id="searchForm">
         <Row className="align-items-center">
           <Col sm={3} />
@@ -172,7 +172,7 @@ function SearchForm({ setPets }: SearchFormProps) {
 
         <Form.Group className="text-center" controlId="formBtn">
           <Button
-            variant="primary"
+            variant="warning"
             type="submit"
             onClick={(e) => {
               e.preventDefault();

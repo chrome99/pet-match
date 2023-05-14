@@ -30,11 +30,11 @@
     padding: 0rem 1rem;
     font-size: 6rem;
     font-family: "Cookie";
-    margin-top: 2rem;
-}
-.heading, .infoText {
-    margin-bottom: 1rem;
+    margin: 2rem 0;
     text-align: center;
+}
+#welcomeContainer .heading, .infoText {
+    margin-bottom: 1rem;
 }
 
 .infoText {

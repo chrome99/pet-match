@@ -1,12 +1,9 @@
 #myPetsContainer {
-    height: 95%;
-    width: 70%;
+    width: 100%;
+    padding: 2rem 5%;
 }
-#AllPetsSpinnerDiv {
-    margin: auto;
-    width: fit-content;
-}
-#myPetsCollectionContainer {
-    height: 90%;
-    overflow-y: scroll;
+
+#myPetsContainer .petCard {
+    height: 400px;
+    width: 300px;
 }

@@ -15,3 +15,7 @@ body, #root {
   margin: auto;
   width: fit-content;
 }
+.nav-link {
+  --bs-nav-link-color: #ffc107;
+  --bs-nav-link-hover-color: #fde089; 
+}

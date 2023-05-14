@@ -1,34 +1,47 @@
 #chatContainer {
-    width: 68%;
+    width: 75%;
     height: 700px;
+    position: relative;
 }
 #chatHeading {
-    height: 10%;
     display: flex;
     flex-direction: row;
+    flex-wrap: nowrap;
     justify-content: space-between;
+    margin-bottom: 1rem;
+    height: 30px;
 }
 #chatHeadingButtons button {
     margin-left: 1rem;
 }
 #chatHeading h4 {
     margin: 0;
-    max-width: 70%;
 }
 #allMessages {
     width: 100%;
     height: 75%;
+    max-height: 600px;
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    margin-bottom: 1rem;
+}
+#allMessagesBackground {
+    position: absolute;
+    height: 75%;
+    width: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0.2;
 }
 .chatMessage {
-    background-color: #545AA7;
+    background-color: #0d6efd;
     color: white;
     border-radius: 0.5rem;
     padding: 0.5rem;
+    margin: 0.5rem 1rem;
     width: fit-content;
 }
 .receivedMessage {
@@ -49,4 +62,10 @@
 }
 #chatForm form {
     width: 100%;
+}
+@media (max-width: 780px) {
+    #chatContainer {
+        height: 700px;
+        width: 100%;
+    }
 }
