@@ -10,8 +10,6 @@ import UsersCollection from "./Users/UsersCollection";
 import UserModal from "./Users/UserModal";
 
 function Dashboard() {
-  //todo: fix change admin not updating bug
-
   const { user } = useContext(UserContext) as UserContextType;
   const [allPetsList, setAllPetsList] = useState<IPet[] | null | undefined>(
     undefined

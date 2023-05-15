@@ -1,16 +1,14 @@
 import React, { useState, useContext } from "react";
 import "./RequestForm.css";
 import { Form, Button, Alert } from "react-bootstrap";
-import axios from "axios";
 import { UserContext, UserContextType } from "../UserContext";
-import { Request } from "./Contact";
+import { socket } from "./Socket";
 
 interface RequestFormProps {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
-  addRequest: (value: Request) => void;
 }
 
-function RequestForm({ setModal, addRequest }: RequestFormProps) {
+function RequestForm({ setModal }: RequestFormProps) {
   const { user } = useContext(UserContext) as UserContextType;
   const [alert, setAlert] = useState("");
 
@@ -25,6 +23,15 @@ function RequestForm({ setModal, addRequest }: RequestFormProps) {
       return;
     }
 
+    socket.emit("newRequest", {
+      title: titleInput,
+      body: bodyInput,
+      userId: user.id,
+      userName: user.firstName + " " + user.lastName,
+    });
+    setModal(false);
+
+    /*
     axios
       .post(
         "http://localhost:8080/request",
@@ -49,6 +56,7 @@ function RequestForm({ setModal, addRequest }: RequestFormProps) {
         console.log(error.response.data);
         setAlert(error.response.data);
       });
+      */
   }
 
   return (

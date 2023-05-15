@@ -4,11 +4,13 @@ import { Navigate } from "react-router-dom";
 
 interface routeFunctionProps {
   redirectRoute: string;
+  openModal: Function;
   children: JSX.Element;
   onlyAdmin?: boolean;
 }
 function UserRoute({
   redirectRoute,
+  openModal,
   children,
   onlyAdmin = false,
 }: routeFunctionProps) {
@@ -17,6 +19,7 @@ function UserRoute({
   if (securityCheck) {
     return children;
   } else {
+    // openModal();
     return <Navigate to={redirectRoute} />;
   }
 }

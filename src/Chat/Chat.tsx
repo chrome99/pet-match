@@ -3,96 +3,26 @@ import "./Chat.css";
 import { socket } from "./Socket";
 import { UserContext, UserContextType } from "../UserContext";
 import { Form, Button, InputGroup } from "react-bootstrap";
-import axios from "axios";
-import { Request } from "./Contact";
-
-type Message = {
-  id?: string;
-  _id?: string;
-  requestId: string;
-  userId: string;
-  userName: string;
-  value: string;
-  madeByUser?: boolean;
-  createdAt?: Date;
-};
+import { Request, Message } from "./Contact";
 
 interface ChatProps {
   currentRequest?: Request;
-  updateCurrentRequest: Function;
 }
 
-function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
+function Chat({ currentRequest }: ChatProps) {
   const { user } = useContext(UserContext) as UserContextType;
   const [messages, setMessages] = useState<Message[]>([]);
   const [msgInput, setMsgInput] = useState("");
   const allMessagesRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user || !currentRequest) return;
-
-    function fetchData() {
-      if (!user || !currentRequest) return;
-
-      axios
-        .get("http://localhost:8080/messages/" + currentRequest.id, {
-          headers: { "x-access-token": user.token },
-        })
-        .then((response) => {
-          response.data.map((message: any) => {
-            const newMessage = message;
-            newMessage.id = message._id;
-            newMessage.madeByUser = message.userId === user.id;
-            if (newMessage.createdAt) {
-              newMessage.createdAt = new Date(message.createdAt.toString());
-            }
-            return newMessage;
-          });
-          const sender = response.data.findLast(
-            (message: any) => message.userId !== user.id
-          );
-          if (sender) {
-            currentRequest.senderName = sender.userName;
-          }
-          setMessages(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-
-    function onNewMsg(message: Message) {
-      if (!user || !currentRequest) return;
-      if (currentRequest.senderName === undefined) {
-        currentRequest.senderName = message.userName;
-      }
-
-      message.id = message._id;
-      message.madeByUser = message.userId === user.id;
-      if (message.createdAt) {
-        message.createdAt = new Date(message.createdAt.toString());
-      }
-      setMessages((messages) => [...messages, message]);
-    }
-
-    fetchData();
-
-    socket.connect();
-
-    socket.emit("joinRoom", currentRequest.id);
-
-    socket.on("sendMessage", onNewMsg);
-
-    return () => {
-      socket.off("sendMessage", onNewMsg);
-      socket.disconnect();
-    };
-  }, [currentRequest, user]);
+    if (!currentRequest) return;
+    setMessages(currentRequest.messages);
+  }, [currentRequest]);
 
   useEffect(() => {
-    if (!currentRequest) return;
     allMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, currentRequest]);
 
   function sendMsg(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -111,35 +41,17 @@ function Chat({ currentRequest, updateCurrentRequest }: ChatProps) {
   function updateRequest(value: "open" | "closed" | "unattended") {
     if (!user || !currentRequest) return;
 
-    axios
-      .put(
-        "http://localhost:8080/request",
-        {
-          id: currentRequest.id,
-          adminId: user.id,
-          value: value,
-        },
-        {
-          headers: { admin: user.id, "x-access-token": user.token },
-        }
-      )
-      .then((response) => {
-        currentRequest.state = value;
-        updateCurrentRequest(value);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    socket.emit("changeReqState", {
+      id: currentRequest.id,
+      adminId: user.id,
+      value: value,
+    });
   }
 
   return (
     <div id="chatContainer">
       <div id="chatHeading">
-        <h4>
-          {currentRequest?.senderName
-            ? currentRequest.senderName.toString()
-            : ""}
-        </h4>
+        <h4>{currentRequest?.title}</h4>
         <div
           id="chatHeadingButtons"
           className={user && user.admin ? "" : "d-none"}

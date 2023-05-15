@@ -4,29 +4,30 @@
     height: 700px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 .chatMenuRequest {
     margin-bottom: 1rem;
     background-color: #E5E4E2;
     border-radius: 0.5rem;
     padding: 0.5rem;
+    display: flex;
+    justify-content: space-between;
 }
 .chatMenuRequest:hover {
     background-color: #D3D3D3;
     cursor: pointer;
 }
+.chatMenuRequest img {
+    width: 25px;
+    height: 25px;
+}
 #chatsMenuAll {
     overflow-y: scroll;
+    margin-bottom: 1rem;
 }
-.chatsMenuHeading {
-    font-size: 1.2rem;
-}
-.chatsMenuHeading:hover {
-    cursor: pointer;
-}
-.chatsMenuHeading .myArrow{
-    margin-right: 0.5rem;
+#chatsMenuHeading, #chatsMenuHeadingFilter {
+    margin-bottom: 1rem;
 }
 #chatsMenuButton {
     align-self: center;

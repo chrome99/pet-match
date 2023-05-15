@@ -5,12 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext, UserContextType } from "../UserContext";
 import MyModal from "./Modal/MyModal";
 
-function Navbar() {
-  const { user, changeUser } = useContext(UserContext) as UserContextType;
-  const [modal, setModal] = useState(false);
-  const navigate = useNavigate();
+interface NavbarProps {
+  modal: boolean;
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-  //todo: edit navbar to popout sidebar.
+function Navbar({ modal, setModal }: NavbarProps) {
+  const { user, changeUser } = useContext(UserContext) as UserContextType;
+  const navigate = useNavigate();
 
   function logout() {
     changeUser(null);

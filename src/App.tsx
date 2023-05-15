@@ -14,28 +14,25 @@ import Contact from "./Chat/Contact";
 import Faq from "./Faq/Faq";
 
 /*
-update route guard to open login modal if not logged in
-fix chats
-bottom navbar (copy from other websites)
+important:
+organize backend
+deploy
+
+less important:
+fix force updates (2) in dashboard 
 add pagination to petsCollection, also use shadows and shadow on hover
-
-
-
-css suggestions:
-animal svg loading animation
-add spinners where needed
-maybe add bootstrap validation to forms everywhere
-search by default should show available pets
+bottom navbar (copy from other websites)
+update route guard to open login modal if not logged in
 
 additional suggestions:
 add readme
-use populate
-scroll to top on route change (for example at the link in the end of homepage)
+use more populate
 
 */
 
 function App() {
   const [user, setUser] = useState<IUser | null>(initUser);
+  const [loginModal, setLoginModal] = useState(false);
 
   function initUser() {
     if (localStorage.user) {
@@ -50,16 +47,20 @@ function App() {
     localStorage.user = JSON.stringify(value);
   }
 
+  function openModal() {
+    setLoginModal(true);
+  }
+
   return (
     <UserContext.Provider value={{ user, changeUser }}>
       <BrowserRouter>
-        <Navbar />
+        <Navbar modal={loginModal} setModal={setLoginModal} />
         <Routes>
           <Route path="/" index element={<Home />} />
           <Route
             path="/mypets"
             element={
-              <UserRoute redirectRoute={"/"}>
+              <UserRoute redirectRoute={"/"} openModal={openModal}>
                 <MyPets />
               </UserRoute>
             }
@@ -68,7 +69,7 @@ function App() {
           <Route
             path="/profile"
             element={
-              <UserRoute redirectRoute={"/"}>
+              <UserRoute redirectRoute={"/"} openModal={openModal}>
                 <Profile />
               </UserRoute>
             }
@@ -78,7 +79,7 @@ function App() {
           <Route
             path="/contact"
             element={
-              <UserRoute redirectRoute={"/"}>
+              <UserRoute redirectRoute={"/"} openModal={openModal}>
                 <Contact />
               </UserRoute>
             }
@@ -86,7 +87,11 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <UserRoute redirectRoute={"/"} onlyAdmin={true}>
+              <UserRoute
+                redirectRoute={"/"}
+                onlyAdmin={true}
+                openModal={openModal}
+              >
                 <Dashboard />
               </UserRoute>
             }
