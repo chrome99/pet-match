@@ -27,6 +27,15 @@ const app = express();
 
 app.use(express.json());
 
+/*
+todo:
+organize code into different folders
+validate all incoming user input using middleware (for each schema)
+use global middleware for user and admin (with exceptions)
+use seperate endpoint for file upload
+
+*/
+
 
 const server = app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}...`)
@@ -46,16 +55,38 @@ function connectToSocketIo() {
     io.on("connection", (socket) => {
         
       // if message sent, send the message to everyone on a room chat
-      socket.on("sendMessage", (data) => {
+      socket.on("sendMessage", async (data) => {
         //add to db
-        const newMessage = new Message(data);
-        newMessage.save()
-        .then((result) => {
+        try {
+            //create message
+            const newMessage = new Message(data);
+            const result = await newMessage.save()
             io.to(result.requestId).emit("sendMessage", result); //requestId is the room!
-        })
-        .catch(err => {
-            console.log(err);
-        })
+
+            //update request about new message
+            const updateRequest = await Request.findById(newMessage.requestId)
+            updateRequest.messages.push(newMessage._id);
+            await updateRequest.save();
+        }
+        catch(err) {
+            console.log(err)
+        }
+      })
+
+      socket.on("newRequest", async (data) => {
+        const { title, body, userId, userName } = data;
+        if (!(title && body && userId && userName)) {
+            throw Error("All input is required");
+        }
+
+        const newMessageId = new ObjectId();
+        const newRequestId = new ObjectId();
+        const newFirstMsg = new Message({_id: newMessageId, requestId: newRequestId, userId: userId, userName: userName, value: body}) 
+        const newRequest = new Request({_id: newRequestId, messages: [newMessageId], title: title, userId: userId, state: "unattended"})
+        requestResult = await newRequest.save()
+        msgResult = await newFirstMsg.save()
+        requestResult.messages = [msgResult];
+        io.emit("newRequest", requestResult);
       })
 
       socket.on("changeReqState", async (data) => {
@@ -91,12 +122,12 @@ function connectToSocketIo() {
         }
     
         const result = await request.save();
-        io.to(id).emit("changeReqState", value);
+        io.to(id).emit("changeReqState", data);
       })
 
       // Join the user to a socket room
       socket.on('joinRoom', (data) => {
-        socket.join(data); 
+        socket.join(data);
       });
     });
 }
@@ -157,20 +188,20 @@ app.put("/request", verifyToken, adminOnly, async (req, res) => {
 app.get("/requestadmin/:id", verifyToken, adminOnly, async (req, res) => {
     const id = req.params.id;
 
-    const unattendedRequest = await Request.find({adminId: id});
+    const unattendedRequest = await Request.find({adminId: id}).populate('messages');
     res.status(200).send(unattendedRequest);
 })
 
 //get all requests made by user (get by user id)
 app.get("/request/:id", verifyToken, async (req, res) => {
     const id = req.params.id;
-    const allUserRequests = await Request.find({userId: id});
+    const allUserRequests = await Request.find({userId: id}).populate('messages');
     res.status(200).send(allUserRequests);
 })
 
 //get all unattended requests
 app.get("/unattendedrequest", verifyToken, adminOnly, async (req, res) => {
-    const allUnattendedRequests = await Request.find({state: "unattended"});
+    const allUnattendedRequests = await Request.find({state: "unattended"}).populate('messages');
     res.status(200).send(allUnattendedRequests);
 })
 
@@ -181,10 +212,13 @@ app.post("/request", verifyToken, async (req, res) => {
         return res.status(400).send("All input is required");
     }
 
-    const newRequest = new Request({title: title, userId: userId, state: "unattended"})
-    const newFirstMsg = new Message({requestId: newRequest._id, userId: userId, userName: userName, value: body}) 
+    const newMessageId = new ObjectId();
+    const newRequestId = new ObjectId();
+    const newFirstMsg = new Message({_id: newMessageId, requestId: newRequestId, userId: userId, userName: userName, value: body}) 
+    const newRequest = new Request({_id: newRequestId, messages: [newMessageId], title: title, userId: userId, state: "unattended"})
     requestResult = await newRequest.save()
     msgResult = await newFirstMsg.save()
+    requestResult.messages = [msgResult];
     res.status(200).send(requestResult);
 })
 

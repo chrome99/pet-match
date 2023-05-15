@@ -6,6 +6,7 @@ const requestSchema = new mongoose.Schema({
     userId: rString,
     state: {type: String, enum: ['open', 'closed', 'unattended'], required: true},
     adminId: String,
+    messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }]
 }, {timestamps: true});
 
 const Request = mongoose.model("Request", requestSchema);
