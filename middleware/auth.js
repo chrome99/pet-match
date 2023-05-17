@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const config = process.env;
-// const mongoose = require("mongoose");
-const { User } = require("../userSchema");
+const { User } = require("../models/users");
 const { ObjectId } = require("mongodb");
 
 async function adminOnly(req, res, next) {
