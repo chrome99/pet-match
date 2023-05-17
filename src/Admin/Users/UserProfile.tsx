@@ -35,7 +35,7 @@ function UserProfile({
     }
 
     axios
-      .get("http://localhost:8080/petsbyid?ids=" + user.pets.toString())
+      .get("http://localhost:8080/pet/multiple?ids=" + user.pets.toString())
       .then((response) => {
         response.data.map((pet: any) => {
           return (pet.id = pet._id);
@@ -52,7 +52,7 @@ function UserProfile({
 
     axios
       .post(
-        "http://localhost:8080/adminuser",
+        "http://localhost:8080/user/admin",
         { id: user.id, adminValue: !user.admin },
         {
           headers: {

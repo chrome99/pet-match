@@ -50,7 +50,7 @@ function Contact() {
 
       try {
         const response = await axios.get(
-          `http://localhost:8080/${user.admin ? "requestadmin" : "request"}/${
+          `http://localhost:8080/request${user.admin ? "/admin" : ""}/${
             user.id
           }`,
           {
@@ -79,7 +79,7 @@ function Contact() {
         }
 
         const adminResponse = await axios.get(
-          "http://localhost:8080/unattendedrequest",
+          "http://localhost:8080/request/unattended",
           {
             headers: {
               admin: user.admin ? user.id : "",
@@ -87,6 +87,7 @@ function Contact() {
             },
           }
         );
+        console.log(adminResponse);
         adminResponse.data.forEach((req: any, i: number, reqs: any) => {
           reqs[i].id = reqs[i]._id;
           reqs[i].createdAt = new Date(reqs[i].createdAt);

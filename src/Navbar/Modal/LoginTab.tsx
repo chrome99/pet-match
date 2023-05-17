@@ -13,7 +13,7 @@ function LoginTab({ setModal }: MyModalProps) {
 
   function login() {
     axios
-      .post("http://localhost:8080/login", {
+      .post("http://localhost:8080/auth/login", {
         email: emailInput,
         password: passwordInput,
       })

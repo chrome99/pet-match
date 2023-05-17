@@ -55,7 +55,7 @@ function SearchForm({ setPets }: SearchFormProps) {
 
     setSpinner(true);
     axios
-      .get("http://localhost:8080/pets/" + queryInput)
+      .get("http://localhost:8080/pet/" + queryInput)
       .then((response) => {
         response.data.map((pet: any) => {
           return (pet.id = pet._id);

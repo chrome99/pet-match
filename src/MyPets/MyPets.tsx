@@ -22,7 +22,7 @@ function MyPets() {
       setMyPetsList(null);
     } else {
       axios
-        .get("http://localhost:8080/petsbyid?ids=" + user.pets.toString())
+        .get("http://localhost:8080/pet/multiple?ids=" + user.pets.toString())
         .then((response) => {
           response.data.forEach((pet: any) => {
             pet.id = pet._id;
@@ -43,7 +43,8 @@ function MyPets() {
         }
         axios
           .get(
-            "http://localhost:8080/petsbyid?ids=" + userWishlist.data.toString()
+            "http://localhost:8080/pet/multiple?ids=" +
+              userWishlist.data.toString()
           )
           .then((petsInWishlist) => {
             petsInWishlist.data.forEach((pet: any) => {

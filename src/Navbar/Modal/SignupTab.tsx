@@ -22,7 +22,7 @@ function SignupTab({ setModal }: MyModalProps) {
     }
 
     axios
-      .post("http://localhost:8080/register", {
+      .post("http://localhost:8080/auth/register", {
         firstName: firstNameInput,
         lastName: lastNameInput,
         phone: phoneInput,

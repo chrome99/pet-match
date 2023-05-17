@@ -16,7 +16,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/recentpets?limit=6")
+      .get("http://localhost:8080/pet/recent?limit=6")
       .then((response) => {
         response.data.map((pet: any) => {
           return (pet.id = pet._id);

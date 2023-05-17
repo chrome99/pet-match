@@ -27,7 +27,7 @@ function Dashboard() {
     if (!user) return;
 
     axios
-      .get("http://localhost:8080/pets")
+      .get("http://localhost:8080/pet")
       .then((response) => {
         response.data.map((pet: any) => {
           return (pet.id = pet._id);
@@ -39,7 +39,7 @@ function Dashboard() {
       });
 
     axios
-      .get("http://localhost:8080/users", {
+      .get("http://localhost:8080/user", {
         headers: { admin: user.id, "x-access-token": user.token },
       })
       .then((response) => {
