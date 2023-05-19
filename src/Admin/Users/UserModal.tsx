@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Modal } from "react-bootstrap";
 import "./UserModal.css";
 import { IUser } from "../../UserContext";
@@ -8,17 +8,10 @@ interface UserModalProps {
   modal: boolean;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   user: IUser | null;
-  setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
-  setForceUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+  updateUserAdmin: (userToUpdate: IUser) => void;
 }
 
-function UserModal({
-  modal,
-  setModal,
-  user,
-  setUser,
-  setForceUpdate,
-}: UserModalProps) {
+function UserModal({ modal, setModal, user, updateUserAdmin }: UserModalProps) {
   return (
     <Modal
       size="lg"
@@ -29,13 +22,7 @@ function UserModal({
     >
       <Modal.Body>
         {user ? (
-          <UserProfile
-            modal={modal}
-            setModal={setModal}
-            user={user}
-            setUser={setUser}
-            setForceUpdate={setForceUpdate}
-          />
+          <UserProfile user={user} updateUserAdmin={updateUserAdmin} />
         ) : (
           ""
         )}

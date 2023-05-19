@@ -15,7 +15,7 @@ function ChatsMenu({ requests, setCurrentRequest }: ChatMenuProps) {
 
   const [selectFilter, setSelectFilter] = useState<
     "all" | "unattended" | "open" | "closed"
-  >("unattended");
+  >("all");
   const [selectSort, setSelectSort] = useState<"newest" | "oldest">("newest");
 
   return (
@@ -32,10 +32,10 @@ function ChatsMenu({ requests, setCurrentRequest }: ChatMenuProps) {
               }}
               value={selectFilter}
             >
-              <option value="open">Open</option>
-              <option value="unattended">New</option>
-              <option value="closed">Locked</option>
               <option value="all">All</option>
+              <option value="unattended">New</option>
+              <option value="open">Open</option>
+              <option value="closed">Locked</option>
             </Form.Select>
           </div>
           <div>
@@ -69,7 +69,9 @@ function ChatsMenu({ requests, setCurrentRequest }: ChatMenuProps) {
                       key={request.id}
                       onClick={() => setCurrentRequest(request)}
                     >
-                      {request.title}
+                      <span>
+                        {request.messages[request.messages.length - 1].value}
+                      </span>
                       <img
                         src={require(`../Images/icon-${request.state}.png`)}
                         alt="state"

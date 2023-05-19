@@ -1,21 +1,11 @@
 import React, { useState } from "react";
 import "./SearchForm.css";
-import {
-  Form,
-  Button,
-  Spinner,
-  Alert,
-  Row,
-  Col,
-  Collapse,
-} from "react-bootstrap";
-import axios from "axios";
-import { IPet } from "../Pet/PetProfile";
+import { Form, Button, Row, Col, Collapse } from "react-bootstrap";
 
 interface SearchFormProps {
-  setPets: React.Dispatch<React.SetStateAction<IPet[] | null>>;
+  getPetsByQuery: (query: string) => void;
 }
-function SearchForm({ setPets }: SearchFormProps) {
+function SearchForm({ getPetsByQuery }: SearchFormProps) {
   type adoptionStatus = "All" | "Fostered" | "Adopted" | "Available";
   type petType = "All" | "Cat" | "Dog";
 
@@ -27,10 +17,9 @@ function SearchForm({ setPets }: SearchFormProps) {
   const [nameInput, setNameInput] = useState("");
 
   const [advancedSearch, setAdvancedSearch] = useState(false);
-  const [spinner, setSpinner] = useState(false);
-  const [alert, setAlert] = useState("");
 
   function searchPets() {
+    //the first "&" later gets replaced by "?"
     let queryInput = "";
     if (typeInput !== "All") {
       queryInput += "&type=" + typeInput;
@@ -50,27 +39,7 @@ function SearchForm({ setPets }: SearchFormProps) {
       }
     }
 
-    //replace the first instance of & with ?
-    queryInput = queryInput.replace("&", "?");
-
-    setSpinner(true);
-    axios
-      .get("http://localhost:8080/pet/" + queryInput)
-      .then((response) => {
-        response.data.map((pet: any) => {
-          return (pet.id = pet._id);
-        });
-        setPets(response.data);
-        setSpinner(false);
-      })
-      .catch((error) => {
-        if (error.response) {
-          setAlert(error.response.data);
-        } else {
-          setAlert(error.message);
-        }
-        setSpinner(false);
-      });
+    getPetsByQuery(queryInput);
   }
 
   return (
@@ -159,17 +128,6 @@ function SearchForm({ setPets }: SearchFormProps) {
           </div>
         </Collapse>
 
-        <Form.Group className={`text-center`} controlId="formAlert">
-          <Alert
-            variant="danger"
-            dismissible={true}
-            show={alert ? true : false}
-            onClose={() => setAlert("")}
-          >
-            {alert}
-          </Alert>
-        </Form.Group>
-
         <Form.Group className="text-center" controlId="formBtn">
           <Button
             variant="warning"
@@ -179,15 +137,6 @@ function SearchForm({ setPets }: SearchFormProps) {
               searchPets();
             }}
           >
-            <Spinner
-              id="submitSpinner"
-              className={spinner ? "" : "d-none"}
-              as="span"
-              animation="border"
-              size="sm"
-              role="status"
-              aria-hidden="true"
-            />
             Search
           </Button>
         </Form.Group>

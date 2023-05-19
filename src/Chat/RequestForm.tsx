@@ -30,33 +30,6 @@ function RequestForm({ setModal }: RequestFormProps) {
       userName: user.firstName + " " + user.lastName,
     });
     setModal(false);
-
-    /*
-    axios
-      .post(
-        "http://localhost:8080/request",
-        {
-          title: titleInput,
-          body: bodyInput,
-          userId: user.id,
-          userName: user.firstName + " " + user.lastName,
-        },
-        {
-          headers: {
-            "x-access-token": user.token,
-          },
-        }
-      )
-      .then((response) => {
-        response.data.id = response.data._id;
-        addRequest(response.data);
-        setModal(false);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-        setAlert(error.response.data);
-      });
-      */
   }
 
   return (

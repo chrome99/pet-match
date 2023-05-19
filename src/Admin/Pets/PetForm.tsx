@@ -5,20 +5,26 @@ import "./ManagePetModal.css";
 import { ManagePetModalProps } from "./ManagePetModal";
 import { UserContext, UserContextType } from "../../UserContext";
 
-function PetForm({ modal, setModal, pet, setPet }: ManagePetModalProps) {
+function PetForm({
+  modal,
+  setModal,
+  pet,
+  updatePet,
+  addPet,
+}: ManagePetModalProps) {
   const { user } = useContext(UserContext) as UserContextType;
 
   const [typeInput, setTypeInput] = useState<"Dog" | "Cat">(
     pet ? pet.type : "Dog"
   );
-  const [nameInput, setNameInput] = useState(pet ? pet.name : "asd");
+  const [nameInput, setNameInput] = useState(pet ? pet.name : "");
   const [pictureInput, setPictureInput] = useState<File | null>(null);
-  const [heightInput, setHeightInput] = useState(pet ? pet.height : "777");
-  const [weightInput, setWeightInput] = useState(pet ? pet.weight : "777");
-  const [colorInput, setColorInput] = useState(pet ? pet.color : "asd");
-  const [bioInput, setBioInput] = useState(pet ? pet.bio : "asd");
-  const [dieteryInput, setDieteryInput] = useState(pet ? pet.dietery : "asd");
-  const [breedInput, setBreedInput] = useState(pet ? pet.breed : "asd");
+  const [heightInput, setHeightInput] = useState(pet ? pet.height : "");
+  const [weightInput, setWeightInput] = useState(pet ? pet.weight : "");
+  const [colorInput, setColorInput] = useState(pet ? pet.color : "");
+  const [bioInput, setBioInput] = useState(pet ? pet.bio : "");
+  const [dieteryInput, setDieteryInput] = useState(pet ? pet.dietery : "");
+  const [breedInput, setBreedInput] = useState(pet ? pet.breed : "");
   const [adoptionStatusInput, setAdoptionStatusInput] = useState<
     "Adopted" | "Fostered" | "Available"
   >(pet ? pet.adoptionStatus : "Available");
@@ -84,10 +90,14 @@ function PetForm({ modal, setModal, pet, setPet }: ManagePetModalProps) {
         "x-access-token": user.token,
       },
     })
-      .then(() => {
-        //if edit mode, then notify dashboard that pet was edited so the collection should re-render!
+      .then((response) => {
+        //if edit mode, then update pet inside collection
+        //if add-new-pet mode, then add new pet inside collection
+        response.data.id = response.data._id;
         if (pet) {
-          setPet("Pet Edited");
+          updatePet(response.data);
+        } else {
+          addPet(response.data);
         }
         setModal(false);
       })

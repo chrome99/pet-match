@@ -14,6 +14,7 @@ h3 {
 }
 #userPetsCollection #petsCollectionContainer {
     max-height: 370px;
+    overflow-y: scroll;
 }
 #userPetsCollection .petCard {
     width: 200px;

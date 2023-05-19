@@ -11,54 +11,114 @@ import UserModal from "./Users/UserModal";
 
 function Dashboard() {
   const { user } = useContext(UserContext) as UserContextType;
-  const [allPetsList, setAllPetsList] = useState<IPet[] | null | undefined>(
-    undefined
-  );
-  const [usersList, setUsersList] = useState<IUser[] | null | undefined>(
-    undefined
-  );
+  const [allPetsList, setAllPetsList] = useState<IPet[] | undefined>(undefined);
+  const [usersList, setUsersList] = useState<IUser[] | undefined>(undefined);
   const [managePetModal, setManagePetModal] = useState(false);
-  const [modalPet, setModalPet] = useState<IPet | null | "Pet Edited">(null);
+  const [modalPet, setModalPet] = useState<IPet | null>(null);
   const [userModal, setUserModal] = useState(false);
   const [modalUser, setModalUser] = useState<IUser | null>(null);
-  const [forceUpdate, setForceUpdate] = useState(false);
 
-  useEffect(() => {
-    if (!user) return;
+  //pet pagination
+  const [petActivePage, setPetActivePage] = useState(1);
+  const [petPagesCount, setPetPagesCount] = useState(0);
+  const [petSpinner, setPetSpinner] = useState(false);
 
+  //user pagination
+  const [userActivePage, setUserActivePage] = useState(1);
+  const [userPagesCount, setUserPagesCount] = useState(0);
+  const [userSpinner, setUserSpinner] = useState(false);
+
+  function getPets(page: number) {
+    setPetSpinner(true);
     axios
-      .get("http://localhost:8080/pet")
+      .get(`http://localhost:8080/pet?page=${page}`)
       .then((response) => {
-        response.data.map((pet: any) => {
+        response.data.result.map((pet: any) => {
           return (pet.id = pet._id);
         });
-        setAllPetsList(response.data);
+        setPetActivePage(page);
+        setPetPagesCount(Math.ceil(response.data.count / 30)); //30 pets per page
+        setAllPetsList(response.data.result);
+        setPetSpinner(false);
       })
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  function getUsers(page: number) {
+    if (!user) return;
+    setUserSpinner(true);
 
     axios
-      .get("http://localhost:8080/user", {
+      .get(`http://localhost:8080/user?page=${page}`, {
         headers: { admin: user.id, "x-access-token": user.token },
       })
       .then((response) => {
-        response.data.map((user: any) => {
+        response.data.result.map((user: any) => {
           return (user.id = user._id);
         });
-        setUsersList(response.data);
+        setUserActivePage(page);
+        setUserPagesCount(Math.ceil(response.data.count / 10)); //10 users per page
+        setUsersList(response.data.result);
+        setUserSpinner(false);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [user, forceUpdate]);
+  }
 
   useEffect(() => {
-    if (modalPet === "Pet Edited") {
-      setForceUpdate((prev) => !prev);
-      setModalPet(null);
+    getPets(1);
+    getUsers(1);
+  }, []);
+
+  function updateUserAdmin(userToUpdate: IUser) {
+    if (!usersList) return;
+
+    const changedUserIndex = usersList.findIndex(
+      (user) => user.id === userToUpdate.id
+    );
+
+    const updatedUsersList = [...usersList];
+    const targetUser = updatedUsersList[changedUserIndex];
+    const updatedUser = { ...targetUser };
+    updatedUser.admin = userToUpdate.admin;
+    updatedUsersList[changedUserIndex] = updatedUser;
+    setUsersList(updatedUsersList);
+
+    if (updatedUser.id === modalUser?.id) {
+      setModalUser(updatedUser);
     }
-  }, [modalPet]);
+  }
+
+  function updatePet(petToUpdate: IPet) {
+    if (!allPetsList) return;
+
+    const changedPetIndex = allPetsList.findIndex(
+      (pet) => pet.id === petToUpdate.id
+    );
+
+    const updatedPetsList = [...allPetsList];
+    const updatedPet = petToUpdate;
+    updatedPetsList[changedPetIndex] = updatedPet;
+    setAllPetsList(updatedPetsList);
+  }
+
+  function addPet(newPet: IPet) {
+    if (!allPetsList) return;
+
+    //on the off chance that pets list is empty -
+    //(not undefined but empty, meaning there are no pets in the database)
+    //set allPetsList to newPet
+    setAllPetsList((prev) => {
+      if (prev) {
+        return [...prev, newPet];
+      } else {
+        return [newPet];
+      }
+    });
+  }
 
   return (
     <>
@@ -79,20 +139,26 @@ function Dashboard() {
                   Add Pet
                 </Button>
               </div>
-              {allPetsList === undefined ? ( //if undefined (did not get data from the server yet)
-                <div className="spinnerDiv">
-                  <Spinner animation="border" role="status" />
-                </div>
-              ) : allPetsList === null ? (
-                "There Are Currently No Pets On This Website."
-              ) : (
+              <div className="spinnerDiv">
+                <Spinner
+                  animation="border"
+                  role="status"
+                  className={petSpinner ? "" : "d-none"}
+                />
+              </div>
+              {allPetsList ? (
                 <PetsCollection
                   pets={allPetsList}
                   onClickFunction={(pet) => {
                     setModalPet(pet);
                     setManagePetModal(true);
                   }}
+                  pages={petPagesCount}
+                  getMorePets={getPets}
+                  activePage={petActivePage}
                 />
+              ) : (
+                ""
               )}
             </div>
           </Tab>
@@ -101,20 +167,26 @@ function Dashboard() {
               <div id="manageUsersHeading">
                 <h2>Users</h2>
               </div>
-              {usersList === undefined ? ( //if undefined (did not get data from the server yet)
-                <div className="spinnerDiv">
-                  <Spinner animation="border" role="status" />
-                </div>
-              ) : usersList === null ? (
-                "Error Fetching Data."
-              ) : (
+              <div className="spinnerDiv">
+                <Spinner
+                  animation="border"
+                  role="status"
+                  className={userSpinner ? "" : "d-none"}
+                />
+              </div>
+              {usersList ? (
                 <UsersCollection
                   users={usersList}
                   onClickFunction={(user) => {
                     setModalUser(user);
                     setUserModal(true);
                   }}
+                  pages={userPagesCount}
+                  getMoreUsers={getUsers}
+                  activePage={userActivePage}
                 />
+              ) : (
+                ""
               )}
             </div>
           </Tab>
@@ -123,15 +195,15 @@ function Dashboard() {
       <ManagePetModal
         modal={managePetModal}
         setModal={setManagePetModal}
-        pet={modalPet === "Pet Edited" ? null : modalPet}
-        setPet={setModalPet}
+        pet={modalPet}
+        updatePet={updatePet}
+        addPet={addPet}
       />
       <UserModal
         modal={userModal}
         setModal={setUserModal}
         user={modalUser}
-        setUser={setModalUser}
-        setForceUpdate={setForceUpdate}
+        updateUserAdmin={updateUserAdmin}
       />
     </>
   );

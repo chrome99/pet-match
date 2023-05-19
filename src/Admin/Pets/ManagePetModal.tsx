@@ -8,9 +8,16 @@ export interface ManagePetModalProps {
   modal: boolean;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   pet: IPet | null;
-  setPet: React.Dispatch<React.SetStateAction<IPet | "Pet Edited" | null>>;
+  updatePet: (petToUpdate: IPet) => void;
+  addPet: (newPet: IPet) => void;
 }
-function ManagePetModal({ modal, setModal, pet, setPet }: ManagePetModalProps) {
+function ManagePetModal({
+  modal,
+  setModal,
+  pet,
+  updatePet,
+  addPet,
+}: ManagePetModalProps) {
   return (
     <Modal
       size="lg"
@@ -20,7 +27,13 @@ function ManagePetModal({ modal, setModal, pet, setPet }: ManagePetModalProps) {
       }}
     >
       <Modal.Body>
-        <PetForm modal={modal} setModal={setModal} pet={pet} setPet={setPet} />
+        <PetForm
+          modal={modal}
+          setModal={setModal}
+          pet={pet}
+          updatePet={updatePet}
+          addPet={addPet}
+        />
       </Modal.Body>
     </Modal>
   );

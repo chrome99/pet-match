@@ -15,17 +15,15 @@ import Faq from "./Faq/Faq";
 
 /*
 important:
-organize backend
 deploy
 
 less important:
-fix force updates (2) in dashboard 
-add pagination to petsCollection, also use shadows and shadow on hover
 bottom navbar (copy from other websites)
 update route guard to open login modal if not logged in
 
 additional suggestions:
 add readme
+add unseen messages in chat
 use more populate
 
 */

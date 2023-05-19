@@ -18,6 +18,12 @@
     background-color: #D3D3D3;
     cursor: pointer;
 }
+.chatMenuRequest span {
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .chatMenuRequest img {
     width: 25px;
     height: 25px;

@@ -7,20 +7,11 @@ import { IPet } from "../../Pet/PetProfile";
 import PetsCollection from "../../Search/PetsCollection";
 
 interface UserProfileProps {
-  modal: boolean;
-  setModal: React.Dispatch<React.SetStateAction<boolean>>;
   user: IUser;
-  setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
-  setForceUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+  updateUserAdmin: (userToUpdate: IUser) => void;
 }
 
-function UserProfile({
-  modal,
-  setModal,
-  user,
-  setUser,
-  setForceUpdate,
-}: UserProfileProps) {
+function UserProfile({ user, updateUserAdmin }: UserProfileProps) {
   //user is the user who's data is being shown, currentUser is the connected admin user looking at the data
   const { user: currentUser } = useContext(UserContext) as UserContextType;
   const [alert, setAlert] = useState("");
@@ -63,8 +54,7 @@ function UserProfile({
       )
       .then((response) => {
         response.data.id = response.data._id;
-        setUser(response.data);
-        setForceUpdate((prev) => !prev);
+        updateUserAdmin(response.data);
       })
       .catch((error) => {
         console.log(error.response.data);
