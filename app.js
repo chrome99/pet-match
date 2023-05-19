@@ -31,7 +31,7 @@ fix bug where user can adopt pet, but then admin can make pet available -
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://pet-adoption-yhs3hgb6ly.netlify.app/']
+  origin: ['http://localhost:3000', 'https://pet-adoption-yhs3hgb6ly.netlify.app']
 }));
 
 app.use('/request', requestsRoute);

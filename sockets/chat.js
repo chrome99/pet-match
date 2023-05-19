@@ -3,7 +3,7 @@ const chatController = require("../controllers/chat");
 function setupSocket(server) {
     const io = require('socket.io')(server, {
         cors: {
-          origin: ["http://localhost:3000", "https://pet-adoption-yhs3hgb6ly.netlify.app/"],
+          origin: ["http://localhost:3000", "https://pet-adoption-yhs3hgb6ly.netlify.app"],
           methods: ["GET", "POST"]
         }
       });
