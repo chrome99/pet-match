@@ -16,10 +16,4 @@ router.get("/admin/:id", verifyToken, adminOnly, RequestsController.getByAdmin);
 //get messages by request id
 router.get("/messages/:id", verifyToken, RequestsController.getMessages)
 
-//post new request
-router.post("/", verifyToken, RequestsController.post)
-
-//update request state (open, close, unattended)
-router.put("/", verifyToken, adminOnly, RequestsController.updateState)
-
 module.exports = router;

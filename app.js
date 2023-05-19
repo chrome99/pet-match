@@ -1,7 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require('cors');
-const dotenv = require("dotenv").config();
+require("dotenv").config();
+
 const setupSocket = require("./sockets/chat");
 
 const requestsRoute = require("./routes/requests");
@@ -12,7 +13,6 @@ const authRoute = require("./routes/auth");
 
 const URI = process.env.URI;
 const PORT = process.env.PORT;
-const WEBSOCKETPORT = process.env.WEBSOCKETPORT;
 
 /*
 todo:
@@ -40,18 +40,19 @@ app.use('/user', usersRoute);
 app.use('/wishlist', wishlistsRoute);
 app.use('/auth', authRoute);
 
-const server = app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}...`)
-    connectToMongodb();
-    setupSocket(server);
-})
+main();
 
-async function connectToMongodb () {
+async function main () {
     try {
         await mongoose.connect(URI);
         console.log("connected to db");
+        const server = app.listen(PORT, () => {
+            console.log(`Listening on port ${PORT}...`)
+            setupSocket(server);
+        })
     }
     catch (err) {
         console.log(err);
+        process.exit(1);
     }
 }

@@ -14,15 +14,19 @@ cloudinary.config({
 //search pets
 exports.search = asyncHandler(async (req, res) => {
     const searchQuery = {};
-    const { adoptionStatus, type, height, weight, name } = req.query;
+    const { adoptionStatus, type, height, weight, name, page = 1, limit = 30 } = req.query;
     if (adoptionStatus) {searchQuery.adoptionStatus = adoptionStatus}
     if (type) {searchQuery.type = type}
     if (height) {searchQuery.height = height}
     if (weight) {searchQuery.weight = weight}
     if (name) {searchQuery.name = { "$regex": name, "$options": "i" }}
 
-    const searchResult = await Pet.find(searchQuery);
-    res.status(200).send(searchResult);
+    const queryCount = await Pet.countDocuments(searchQuery);
+    const searchResult = await Pet.find(searchQuery)
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .sort({ createdAt: -1 })
+    res.status(200).send({count: queryCount, result: searchResult});
 });
 
 //get recent pets

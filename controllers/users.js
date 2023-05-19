@@ -4,8 +4,13 @@ const { User } = require("../models/users");
 
 //get all users (admin only)
 exports.getAll = asyncHandler(async (req, res) => {
+    const { page = 1, limit = 10 } = req.query;
+    const queryCount = await User.countDocuments();
     const searchResult = await User.find()
-    res.status(200).send(searchResult);
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .sort({ createdAt: 1 });
+    res.status(200).send({count: queryCount, result: searchResult});
 });
 
 //get user by id
