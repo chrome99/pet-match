@@ -1,5 +1,6 @@
 import { io } from "socket.io-client";
+import { config } from "../../Configs/constants";
 
-export const socket = io("http://localhost:8080/", {
+export const socket = io(config.API_URL, {
   autoConnect: false,
 });
