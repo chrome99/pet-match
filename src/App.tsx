@@ -1,17 +1,19 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { config } from "./Configs/constants";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import { UserContext, IUser } from "./UserContext";
-import UserRoute from "./UserRoute";
-import Home from "./Home/Home";
-import Profile from "./Profile/Profile";
-import MyPets from "./MyPets/MyPets";
-import PetProfile from "./Pet/PetProfile";
-import Search from "./Search/Search";
-import Navbar from "./Navbar/Navbar";
-import Dashboard from "./Admin/Dashboard";
-import Contact from "./Chat/Contact";
-import Faq from "./Faq/Faq";
+import { UserContext, IUser } from "./Contexts/UserContext";
+import UserRoute from "./Utils/UserRoute";
+import Home from "./Components/Home/Home";
+import Profile from "./Components/Profile/Profile";
+import MyPets from "./Components/MyPets/MyPets";
+import PetProfile from "./Components/Pet/PetProfile";
+import Search from "./Components/Search/Search";
+import Navbar from "./Components/Navbar/Navbar";
+import Dashboard from "./Components/Admin/Dashboard";
+import Contact from "./Components/Chat/Contact";
+import Faq from "./Components/Faq/Faq";
 
 /*
 important:
@@ -27,6 +29,10 @@ add unseen messages in chat
 use more populate
 
 */
+
+export const server = axios.create({
+  baseURL: config.API_URL,
+});
 
 function App() {
   const [user, setUser] = useState<IUser | null>(initUser);
