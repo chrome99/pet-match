@@ -1,4 +1,7 @@
 const asyncHandler = require("express-async-handler");
+const { Configuration, OpenAIApi } = require("openai");
+const fs = require("fs");
+const path = require('path');
 const { ObjectId } = require("mongodb");
 const { Request } = require("../models/requests");
 const { Message } = require("../models/messages");
@@ -19,19 +22,21 @@ module.exports = (io, socket) => {
   
     //add a new request
     const newRequest = asyncHandler(async (data) => {
-        const { title, body, userId, userName } = data;
+        const { title, body, userId, userName, requestId } = data;
         if (!(title && body && userId && userName)) {
             throw Error("All input is required");
         }
 
         const newMessageId = new ObjectId();
-        const newRequestId = new ObjectId();
+        const newRequestId = new ObjectId(requestId);
         const newFirstMsg = new Message({_id: newMessageId, requestId: newRequestId, userId: userId, userName: userName, value: body}) 
-        const newRequest = new Request({_id: newRequestId, messages: [newMessageId], title: title, userId: userId, state: "unattended"})
+        const newRequest = new Request({_id: newRequestId, messages: [newMessageId], title: title, userId: userId, state: "bot"})
         requestResult = await newRequest.save()
         msgResult = await newFirstMsg.save()
         requestResult.messages = [msgResult];
-        io.emit("newRequest", requestResult);
+        //sending new request to userId room, because user is not listening on this request (he does not have the new request id)
+        io.to(userId).emit("newRequest", requestResult);
+        botAnswer(msgResult);
     })
 
     //change request status
@@ -52,23 +57,66 @@ module.exports = (io, socket) => {
             throw Error("Request Not Found");
         }
 
-        if (value === "open") {
-            request.adminId = adminId;
-            request.state = value;
+        let newUnattendedRequest = false;
+        if (request.state === "bot" && value === "unattended") {
+            newUnattendedRequest = true;
         }
-        else if (value === "closed") {
-            request.state = value;
-        }
-        else if (value === "unattended"){
-            request.adminId = "";
-            request.state = value;
-        }
-        else {
-            throw Error("Invalid value (open | closed | unattended)");
+
+        switch (value) {
+            case "open":
+                request.adminId = adminId;
+                request.assignedAdminAt = new Date();
+                request.state = value;
+                break;
+            case "closed":
+            case "bot":
+                request.state = value;
+                break;
+            case "unattended":
+                request.adminId = "";
+                request.state = value;
+                break;
+            default:
+                throw Error("Invalid value (open | closed | unattended)");
         }
 
         const result = await request.save();
         io.to(id).emit("changeReqState", data);
+        //if new unattended request (bot to unattended), notify admins about it so they can listen to this request
+        if (newUnattendedRequest) {
+            const populatedResult = await result.populate('messages');
+            io.to("adminsRoom").emit("newRequest", populatedResult);
+        }
+    })
+
+    //requesting chat-gpt bot to answer this message
+    const botAnswer = async (data) => {
+        const openAi = new OpenAIApi(
+        new Configuration({
+            apiKey: process.env.OPEN_AI_API_KEY,
+        })
+        )
+        const contextData = fs.readFileSync(path.resolve(__dirname, "../data/contextdata.txt"), "utf8");
+
+        try {
+            const response = await openAi.createChatCompletion({
+                model: "gpt-3.5-turbo",
+                messages: [
+                { role: "user", content: "you are a virtual assitent on a Pet Adoption website. I will ask you questions based on the following data. make sure the answers are short and concise. data: " + contextData },
+                { role: "user", content: data.value }
+                ],
+            })
+            const botResponse = response.data.choices[0].message.content;
+            const newBotMsg = {requestId: data.requestId, userId: "Bot", userName: "Chat-GPT Bot", value: botResponse}; 
+            sendMessage(newBotMsg);
+        }
+        catch {
+            sendError({destination: data.requestId, value: "Chat error. Please send your message again at a later date."})
+        }
+    }
+
+    const sendError = asyncHandler(async (data) => {
+        io.to(data.destination).emit("error", data.value);
     })
 
     //join a specific room (room name is request id)
@@ -77,6 +125,7 @@ module.exports = (io, socket) => {
     })
   
     socket.on("sendMessage", sendMessage);
+    socket.on("botAnswer", botAnswer);
     socket.on("newRequest", newRequest);
     socket.on("changeReqState", changeReqState);
     socket.on("joinRoom", joinRoom);

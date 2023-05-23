@@ -17,10 +17,9 @@ const PORT = process.env.PORT;
 /*
 todo:
 throughly test backend!
-connect chat socket with controller perhaps
 validate all incoming user input using middleware (for each schema)
 use global middleware for user and admin (with exceptions)
-use seperate endpoint for file upload
+use seperate endpoint / controller for file upload
 
 fix bug where user can adopt pet, but then admin can make pet available - 
     make sure that if the pet is made available to also remove it from the
