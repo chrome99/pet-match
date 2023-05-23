@@ -43,6 +43,12 @@
     padding: 0.5rem;
     margin: 0.5rem 1rem;
     width: fit-content;
+    max-width: 80%;
+}
+.botMessage {
+    color: #097969;
+    background-color: #AFE1AF;
+    align-self: flex-end;
 }
 .receivedMessage {
     background-color: #E5E4E2;

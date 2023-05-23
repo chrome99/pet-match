@@ -17,15 +17,17 @@ import Faq from "./Components/Faq/Faq";
 
 /*
 important:
-deploy
-
-less important:
-bottom navbar (copy from other websites)
+finish all backend todos
+chatbot?
 update route guard to open login modal if not logged in
 
-additional suggestions:
 add readme
-add unseen messages in chat
+general code re-factor re-assment
+bottom navbar (copy from other websites)
+
+add dates and unseen messages in chat
+add sign in with google?
+add user picture (and profile?)
 use more populate
 
 */

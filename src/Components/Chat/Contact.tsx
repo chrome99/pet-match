@@ -9,9 +9,10 @@ import { socket } from "./Socket";
 
 export type Request = {
   id: string;
+  _id?: string;
   title: string;
   userId: string;
-  state: "open" | "closed" | "unattended";
+  state: "open" | "closed" | "unattended" | "bot";
   messages: Message[];
   createdAt: Date;
   updatedAt: Date;
@@ -24,14 +25,14 @@ export type Message = {
   userId: string;
   userName: string;
   value: string;
-  madeByUser?: boolean;
+  madeBy?: "user" | "other user" | "bot";
   createdAt?: Date;
 };
 
 interface ChangeReqState {
   id: string;
   adminId: string;
-  value: "open" | "closed" | "unattended";
+  value: "open" | "closed" | "unattended" | "bot";
 }
 
 function Contact() {
@@ -58,21 +59,12 @@ function Contact() {
             },
           }
         );
-        response.data.forEach((req: any, i: number, reqs: any) => {
-          reqs[i].id = reqs[i]._id;
-          reqs[i].createdAt = new Date(reqs[i].createdAt);
-          reqs[i].updatedAt = new Date(reqs[i].updatedAt);
-          reqs[i].messages.forEach((msg: Message, j: number, msgs: any) => {
-            msgs[j].id = msgs[j]._id;
-            msgs[j].madeByUser = msgs[j].userId === user.id;
-            if (msgs[j].createdAt) {
-              msgs[j].createdAt = new Date(msgs[j].createdAt.toString());
-            }
-          });
+        const userResult = response.data.map((req: Request) => {
+          return parseRequest(req, user.id);
         });
 
         if (!user.admin) {
-          setRequests(response.data);
+          setRequests(userResult);
           return;
         }
 
@@ -82,20 +74,10 @@ function Contact() {
             "x-access-token": user.token,
           },
         });
-        console.log(adminResponse);
-        adminResponse.data.forEach((req: any, i: number, reqs: any) => {
-          reqs[i].id = reqs[i]._id;
-          reqs[i].createdAt = new Date(reqs[i].createdAt);
-          reqs[i].updatedAt = new Date(reqs[i].updatedAt);
-          reqs[i].messages.forEach((msg: Message, j: number, msgs: any) => {
-            msgs[j].id = msgs[j]._id;
-            msgs[j].madeByUser = msgs[j].userId === user.id;
-            if (msgs[j].createdAt) {
-              msgs[j].createdAt = new Date(msgs[j].createdAt.toString());
-            }
-          });
+        const adminResult = adminResponse.data.map((req: Request) => {
+          return parseRequest(req, user.id);
         });
-        setRequests([...response.data, ...adminResponse.data]);
+        setRequests([...userResult, ...adminResult]);
       } catch (error) {
         console.log(error);
       }
@@ -106,22 +88,51 @@ function Contact() {
 
   function addRequest(req: Request) {
     if (!user) return;
-    req.createdAt = new Date(req.createdAt);
-    req.updatedAt = new Date(req.updatedAt);
-    req.messages[0].id = req.messages[0]._id;
-    req.messages[0].madeByUser = req.messages[0].userId === user.id;
-    if (req.messages[0].createdAt) {
-      req.messages[0].createdAt = new Date(
-        req.messages[0].createdAt.toString()
-      );
-    }
+    const parsedReq = parseRequest(req, user.id);
     setRequests((prev) => {
       if (prev) {
-        return [...prev, req];
+        return [...prev, parsedReq];
       } else {
-        return [req];
+        return [parsedReq];
       }
     });
+    //if this new request came from the user, then set current request to this new request
+    if (parsedReq.userId === user.id) {
+      setCurrentRequest(parsedReq);
+    }
+  }
+
+  function parseRequest(newRequest: Request, userId: string) {
+    const parsedMessages = newRequest.messages.map((msg) => {
+      return parseMessage(msg, userId);
+    });
+
+    const parsedRequest: Request = { ...newRequest }; //shallow clone because unparsed messages are unimportant anyway
+    parsedRequest.id = parsedRequest._id as string;
+    parsedRequest.createdAt = new Date(parsedRequest.createdAt);
+    parsedRequest.updatedAt = new Date(parsedRequest.updatedAt);
+    parsedRequest.messages = parsedMessages;
+    return parsedRequest;
+  }
+
+  function parseMessage(newMsg: Message, userId: string) {
+    const parsedMsg: Message = { ...newMsg };
+    parsedMsg.id = parsedMsg._id;
+    switch (parsedMsg.userId) {
+      case "Bot":
+        parsedMsg.madeBy = "bot";
+        break;
+      case userId:
+        parsedMsg.madeBy = "user";
+        break;
+      default:
+        parsedMsg.madeBy = "other user";
+    }
+    if (parsedMsg.createdAt) {
+      parsedMsg.createdAt = new Date(parsedMsg.createdAt.toString());
+    }
+
+    return parsedMsg;
   }
 
   useEffect(() => {
@@ -131,11 +142,7 @@ function Contact() {
     function onNewMsg(message: Message) {
       if (!requests || !user) return;
 
-      message.id = message._id;
-      message.madeByUser = message.userId === user.id;
-      if (message.createdAt) {
-        message.createdAt = new Date(message.createdAt.toString());
-      }
+      message = parseMessage(message, user.id);
 
       //find index
       const requestIndex = requests.findIndex(
@@ -156,9 +163,12 @@ function Contact() {
       }
     }
 
-    function onNewRequest(data: any) {
-      data.id = data._id;
-      addRequest(data);
+    function onNewRequest(request: Request) {
+      //new requests can come from 2 sources:
+      //1) a new request a regular non-admin user himself makes
+      //2) an existing request that changed state from "bot" to "open", and is therefore sent to admins listening on "adminsRoom"
+      console.log("new unattended request or user made request...");
+      addRequest(request);
     }
 
     function onChangeReqState(changedRequest: ChangeReqState) {
@@ -181,6 +191,10 @@ function Contact() {
       }
     }
 
+    function onError(value: string) {
+      alert(value);
+    }
+
     socket.connect();
 
     const requestsIds = requests.map((request) => {
@@ -188,13 +202,25 @@ function Contact() {
     });
     socket.emit("joinRoom", requestsIds);
 
+    //also listen to user.id room, to get new requests that the user makes.
+    socket.emit("joinRoom", user.id);
+
+    //if admin, also listen to adminsRoom, to get new unattended requests
+    if (user.admin) {
+      socket.emit("joinRoom", "adminsRoom");
+    }
+
     socket.on("sendMessage", onNewMsg);
+    socket.on("botAnswer", onNewMsg);
     socket.on("newRequest", onNewRequest);
     socket.on("changeReqState", onChangeReqState);
+    socket.on("error", onError);
 
     return () => {
       socket.off("sendMessage", onNewMsg);
+      socket.off("botAnswer", onNewMsg);
       socket.off("newRequest", onNewRequest);
+      socket.on("error", onError);
       socket.off("changeReqState", onChangeReqState);
       socket.disconnect();
     };

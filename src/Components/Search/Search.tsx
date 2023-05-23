@@ -20,7 +20,6 @@ function Search() {
   }
 
   function getPets(page: number) {
-    console.log("getting pets...");
     //replace the first instance of & with ?
     let query = queryRef.current + "&page=" + page;
     query = query.replace("&", "?");

@@ -14,7 +14,7 @@ function ChatsMenu({ requests, setCurrentRequest }: ChatMenuProps) {
   const [modal, setModal] = useState(false);
 
   const [selectFilter, setSelectFilter] = useState<
-    "all" | "unattended" | "open" | "closed"
+    "all" | "unattended" | "open" | "closed" | "bot"
   >("all");
   const [selectSort, setSelectSort] = useState<"newest" | "oldest">("newest");
 
@@ -27,12 +27,18 @@ function ChatsMenu({ requests, setCurrentRequest }: ChatMenuProps) {
             <Form.Select
               onChange={(e) => {
                 setSelectFilter(
-                  e.target.value as "all" | "unattended" | "open" | "closed"
+                  e.target.value as
+                    | "all"
+                    | "unattended"
+                    | "open"
+                    | "closed"
+                    | "bot"
                 );
               }}
               value={selectFilter}
             >
               <option value="all">All</option>
+              <option value="bot">Bot</option>
               <option value="unattended">New</option>
               <option value="open">Open</option>
               <option value="closed">Locked</option>
@@ -70,7 +76,9 @@ function ChatsMenu({ requests, setCurrentRequest }: ChatMenuProps) {
                       onClick={() => setCurrentRequest(request)}
                     >
                       <span>
-                        {request.messages[request.messages.length - 1].value}
+                        {request.messages.length > 0
+                          ? request.messages[request.messages.length - 1].value
+                          : "Topic: " + request.title}
                       </span>
                       <img
                         src={require(`../../Assets/Images/icon-${request.state}.png`)}
