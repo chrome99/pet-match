@@ -119,7 +119,7 @@ function Contact() {
     const parsedMsg: Message = { ...newMsg };
     parsedMsg.id = parsedMsg._id;
     switch (parsedMsg.userId) {
-      case "Bot":
+      case "646e1ec676f95c539fe79f48": //bot user id
         parsedMsg.madeBy = "bot";
         break;
       case userId:
@@ -167,7 +167,6 @@ function Contact() {
       //new requests can come from 2 sources:
       //1) a new request a regular non-admin user himself makes
       //2) an existing request that changed state from "bot" to "open", and is therefore sent to admins listening on "adminsRoom"
-      console.log("new unattended request or user made request...");
       addRequest(request);
     }
 

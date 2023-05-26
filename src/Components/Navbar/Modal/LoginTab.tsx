@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Button, Form, Alert } from "react-bootstrap";
+import { Button, Form, Alert, Row } from "react-bootstrap";
 import { server } from "../../../App";
 import {
   UserContext,
@@ -7,19 +7,28 @@ import {
   IUser,
 } from "../../../Contexts/UserContext";
 import { MyModalProps } from "./MyModal";
+import { object as schema } from "yup";
+import { Formik } from "formik";
+import validictonary from "../../../Utils/Validictonary";
+import { MyInput, MySubmit, MyAlert } from "../../../Utils/MyForm";
 
 function LoginTab({ setModal }: MyModalProps) {
   const { changeUser } = useContext(UserContext) as UserContextType;
 
-  const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
   const [alert, setAlert] = useState("");
 
-  function login() {
+  type formData = {
+    email: string;
+    password: string;
+  };
+  function login(
+    form: formData,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
     server
       .post("auth/login", {
-        email: emailInput,
-        password: passwordInput,
+        email: form.email,
+        password: form.password,
       })
       .then((response) => {
         const newUser: IUser = {
@@ -43,51 +52,38 @@ function LoginTab({ setModal }: MyModalProps) {
         } else {
           setAlert(error.message);
         }
+      })
+      .finally(() => {
+        setSubmitting(false);
       });
   }
 
   return (
-    <Form>
-      <Form.Group className="mb-3" controlId="formEmail">
-        <Form.Label>Email address</Form.Label>
-        <Form.Control
-          type="email"
-          value={emailInput}
-          onChange={(e) => setEmailInput(e.target.value)}
-        />
-      </Form.Group>
+    <Formik
+      validationSchema={schema().shape({
+        email: validictonary.email,
+        password: validictonary.password(),
+      })}
+      onSubmit={(e, { setSubmitting }) => login(e, setSubmitting)}
+      initialValues={{
+        email: "",
+        password: "",
+      }}
+    >
+      {({ handleSubmit, isSubmitting }) => (
+        <Form noValidate onSubmit={handleSubmit}>
+          <Row className="mb-3">
+            <MyInput name="email" label="Email address" type="email" />
+          </Row>
+          <Row className="mb-3">
+            <MyInput name="password" label="Password" type="password" />
+          </Row>
 
-      <Form.Group className="mb-3" controlId="formPassword">
-        <Form.Label>Password</Form.Label>
-        <Form.Control
-          type="password"
-          value={passwordInput}
-          onChange={(e) => setPasswordInput(e.target.value)}
-        />
-      </Form.Group>
-      <Form.Group className={`text-center`} controlId="formAlert">
-        <Alert
-          variant="danger"
-          dismissible={true}
-          show={alert ? true : false}
-          onClose={() => setAlert("")}
-        >
-          {alert}
-        </Alert>
-      </Form.Group>
-      <Form.Group className="text-center" controlId="formBtn">
-        <Button
-          variant="warning"
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            login();
-          }}
-        >
-          Log In
-        </Button>
-      </Form.Group>
-    </Form>
+          <MyAlert alert={alert} setAlert={setAlert} />
+          <MySubmit text="Log In" isSubmitting={isSubmitting} />
+        </Form>
+      )}
+    </Formik>
   );
 }
 

@@ -1,146 +1,124 @@
 import React, { useState } from "react";
 import "./SearchForm.css";
-import { Form, Button, Row, Col, Collapse } from "react-bootstrap";
+import { Form, Row, Col, Collapse } from "react-bootstrap";
+import { object as schema } from "yup";
+import { Formik } from "formik";
+import { MyInput, MySubmit, MySelect } from "../../Utils/MyForm";
+import validictonary from "../../Utils/Validictonary";
 
 interface SearchFormProps {
-  getPetsByQuery: (query: string) => void;
+  getPetsByQuery: (
+    query: string,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => void;
 }
 function SearchForm({ getPetsByQuery }: SearchFormProps) {
-  type adoptionStatus = "All" | "Fostered" | "Adopted" | "Available";
-  type petType = "All" | "Cat" | "Dog";
-
-  const [adoptionStatusInput, setAdoptionStatusInput] =
-    useState<adoptionStatus>("All");
-  const [typeInput, setTypeInput] = useState<petType>("All");
-  const [heightInput, setHeightInput] = useState("");
-  const [weightInput, setWeightInput] = useState("");
-  const [nameInput, setNameInput] = useState("");
-
   const [advancedSearch, setAdvancedSearch] = useState(false);
 
-  function searchPets() {
+  type formData = {
+    type: string;
+    name: string;
+    height: string | number;
+    weight: string | number;
+    adoptionStatus: string;
+  };
+  function searchPets(
+    form: formData,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
     //the first "&" later gets replaced by "?"
     let queryInput = "";
-    if (typeInput !== "All") {
-      queryInput += "&type=" + typeInput;
+    if (form.type !== "All") {
+      queryInput += "&type=" + form.type;
     }
     if (advancedSearch) {
-      if (adoptionStatusInput !== "All") {
-        queryInput += "&adoptionStatus=" + adoptionStatusInput;
+      if (form.adoptionStatus !== "All") {
+        queryInput += "&adoptionStatus=" + form.adoptionStatus;
       }
-      if (heightInput) {
-        queryInput += "&height=" + heightInput;
+      if (form.height) {
+        queryInput += "&height=" + form.height;
       }
-      if (weightInput) {
-        queryInput += "&weight=" + weightInput;
+      if (form.weight) {
+        queryInput += "&weight=" + form.weight;
       }
-      if (nameInput) {
-        queryInput += "&name=" + nameInput;
+      if (form.name) {
+        queryInput += "&name=" + form.name;
       }
     }
 
-    getPetsByQuery(queryInput);
+    getPetsByQuery(queryInput, setSubmitting);
   }
 
   return (
     <div id="searchContainer">
       <div className="heading">Search</div>
-      <Form id="searchForm">
-        <Row className="align-items-center">
-          <Col sm={3} />
-          <Col sm={6}>
-            <Form.Group id="typeInput" className="mb-3" controlId="formType">
-              <Form.Label>Type</Form.Label>
-              <Form.Select
-                value={typeInput}
-                onChange={(e) => setTypeInput(e.target.value as petType)}
-              >
-                <option>All</option>
-                <option>Dog</option>
-                <option>Cat</option>
-              </Form.Select>
-            </Form.Group>
-          </Col>
-          <Col sm={3}>
-            <Form.Group id="searchSwitch" controlId="formSwitch">
-              <Form.Check
-                type="switch"
-                onClick={() => setAdvancedSearch((prev) => !prev)}
-                label="Advanced"
+      <Formik
+        validationSchema={schema().shape({
+          type: validictonary.select("Type", ["All", "Dog", "Cat"]),
+          name: validictonary.name("Name", false),
+          height: validictonary.pet.height(false),
+          weight: validictonary.pet.weight(false),
+          adoptionStatus: validictonary.select("Adoption Status", [
+            "All",
+            "Adopted",
+            "Fostered",
+            "Available",
+          ]),
+        })}
+        onSubmit={(e, { setSubmitting }) => {
+          searchPets(e, setSubmitting);
+        }}
+        initialValues={{
+          type: "All",
+          name: "",
+          height: "",
+          weight: "",
+          adoptionStatus: "All",
+        }}
+      >
+        {({ handleSubmit, isSubmitting }) => (
+          <Form id="searchForm" noValidate onSubmit={handleSubmit}>
+            <Row className="mb-3 align-items-center">
+              <Col sm={3} />
+              <MySelect
+                name="type"
+                label="Type"
+                options={["All", "Dog", "Cat"]}
+                xs={"6"}
               />
-            </Form.Group>
-          </Col>
-        </Row>
-
-        <Collapse in={advancedSearch}>
-          <div id="advanced-search">
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formName">
-                  <Form.Label>Name</Form.Label>
-                  <Form.Control
-                    type="input"
-                    value={nameInput}
-                    onChange={(e) => setNameInput(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-              <Col>
-                <Form.Group className="mb-3" controlId="formAdoptionStatus">
-                  <Form.Label>Adoption Status</Form.Label>
-                  <Form.Select
-                    value={adoptionStatusInput}
-                    onChange={(e) =>
-                      setAdoptionStatusInput(e.target.value as adoptionStatus)
-                    }
-                  >
-                    <option>All</option>
-                    <option>Available</option>
-                    <option>Fostered</option>
-                    <option>Adopted</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formHeight">
-                  <Form.Label>Height</Form.Label>
-                  <Form.Control
-                    type="input"
-                    value={heightInput}
-                    onChange={(e) => setHeightInput(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-              <Col>
-                <Form.Group className="mb-3" controlId="formWeight">
-                  <Form.Label>Weight</Form.Label>
-                  <Form.Control
-                    type="input"
-                    value={weightInput}
-                    onChange={(e) => setWeightInput(e.target.value)}
+              <Col sm={3}>
+                <Form.Group id="searchSwitch" controlId="formSwitch">
+                  <Form.Check
+                    type="switch"
+                    onClick={() => setAdvancedSearch((prev) => !prev)}
+                    label="Advanced"
                   />
                 </Form.Group>
               </Col>
             </Row>
-          </div>
-        </Collapse>
 
-        <Form.Group className="text-center" controlId="formBtn">
-          <Button
-            variant="warning"
-            type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              searchPets();
-            }}
-          >
-            Search
-          </Button>
-        </Form.Group>
-      </Form>
+            <Collapse in={advancedSearch}>
+              <div id="advanced-search">
+                <Row className="mb-3">
+                  <MyInput name="name" label="Name" />
+                  <MySelect
+                    name="adoptionStatus"
+                    label="Adoption Status"
+                    options={["All", "Fostered", "Adopted", "Available"]}
+                  />
+                </Row>
+
+                <Row className="mb-3">
+                  <MyInput name="height" label="Height" type="number" />
+                  <MyInput name="weight" label="Weight" type="number" />
+                </Row>
+              </div>
+            </Collapse>
+
+            <MySubmit text="Search" isSubmitting={isSubmitting} />
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 }

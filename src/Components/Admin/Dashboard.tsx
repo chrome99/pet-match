@@ -117,7 +117,7 @@ function Dashboard() {
     //set allPetsList to newPet
     setAllPetsList((prev) => {
       if (prev) {
-        return [...prev, newPet];
+        return [newPet, ...prev];
       } else {
         return [newPet];
       }

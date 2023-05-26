@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { UserContext, UserContextType } from "../../Contexts/UserContext";
 import { Button, Spinner } from "react-bootstrap";
 import PetsCarousel from "../Search/PetsCarousel";
@@ -8,13 +8,23 @@ import { server } from "../../App";
 import { IPet } from "../Pet/PetProfile";
 
 function Home() {
-  const { user } = useContext(UserContext) as UserContextType;
+  const { setLoginModal } = useContext(UserContext) as UserContextType;
   const [currentImg, setCurrentImg] = useState(1);
   const [recentPets, setRecentPets] = useState<IPet[] | null | undefined>(
     undefined
   );
 
+  const location = useLocation();
+
   useEffect(() => {
+    function didAccessDenied() {
+      if (location.state?.accessDenied === true) {
+        setLoginModal(true);
+      }
+    }
+
+    didAccessDenied();
+
     server
       .get("pet/recent?limit=6")
       .then((response) => {

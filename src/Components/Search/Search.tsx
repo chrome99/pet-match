@@ -4,7 +4,8 @@ import SearchForm from "./SearchForm";
 import PetsCollection from "./PetsCollection";
 import { IPet } from "../Pet/PetProfile";
 import { server } from "../../App";
-import { Spinner, Alert } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
+import { MyAlert } from "../../Utils/MyForm";
 
 function Search() {
   const [pets, setPets] = useState<IPet[] | null>(null);
@@ -14,16 +15,24 @@ function Search() {
   const [activePage, setActivePage] = useState(1);
   const queryRef = useRef("");
 
-  function getPetsByQuery(query: string) {
+  function getPetsByQuery(
+    query: string,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
     queryRef.current = query;
-    getPets(1);
+    getPets(1, setSubmitting);
   }
 
-  function getPets(page: number) {
+  function getPets(
+    page: number,
+    setSubmitting?: (isSubmitting: boolean) => void
+  ) {
     //replace the first instance of & with ?
     let query = queryRef.current + "&page=" + page;
     query = query.replace("&", "?");
-    setSpinner(true);
+    if (!setSubmitting) {
+      setSpinner(true);
+    }
     server
       .get("pet" + query)
       .then((response) => {
@@ -34,7 +43,6 @@ function Search() {
         setActivePage(page);
         setPagesCount(Math.ceil(response.data.count / 30)); //30 pets per page
         setPets(response.data.result);
-        setSpinner(false);
       })
       .catch((error) => {
         if (error.response) {
@@ -42,22 +50,21 @@ function Search() {
         } else {
           setAlert(error.message);
         }
-        setSpinner(false);
+      })
+      .finally(() => {
+        if (setSubmitting) {
+          setSubmitting(false);
+        } else {
+          setSpinner(false);
+        }
       });
   }
 
   return (
     <div id="searchPage">
       <SearchForm getPetsByQuery={getPetsByQuery} />
-      <div className="spinnerDiv">
-        <Alert
-          variant="danger"
-          dismissible={true}
-          show={alert ? true : false}
-          onClose={() => setAlert("")}
-        >
-          {alert}
-        </Alert>
+      <div className="spinnerDiv mb-3">
+        <MyAlert alert={alert} setAlert={setAlert} />
         <Spinner
           animation="border"
           role="status"

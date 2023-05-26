@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Button, Form, Alert } from "react-bootstrap";
+import { Form, Row } from "react-bootstrap";
 import { server } from "../../../App";
 import {
   UserContext,
@@ -7,32 +7,35 @@ import {
   IUser,
 } from "../../../Contexts/UserContext";
 import { MyModalProps } from "./MyModal";
+import { object as schema } from "yup";
+import { Formik } from "formik";
+import { MyInput, MySubmit, MyAlert } from "../../../Utils/MyForm";
+import validictonary from "../../../Utils/Validictonary";
 
 function SignupTab({ setModal }: MyModalProps) {
   const { changeUser } = useContext(UserContext) as UserContextType;
 
-  const [firstNameInput, setFirstNameInput] = useState("");
-  const [lastNameInput, setLastNameInput] = useState("");
-  const [emailInput, setEmailInput] = useState("");
-  const [phoneInput, setPhoneInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [verPasswordInput, setVerPasswordInput] = useState("");
   const [alert, setAlert] = useState("");
 
-  function signIn() {
-    if (passwordInput !== verPasswordInput) {
-      setAlert("Passwords do not Match");
-      return;
-    }
-
+  type formData = {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  };
+  function signIn(
+    form: formData,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
     server
       .post("auth/register", {
-        firstName: firstNameInput,
-        lastName: lastNameInput,
-        phone: phoneInput,
-        email: emailInput,
-        password: passwordInput,
-        bio: "",
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+        email: form.email,
+        password: form.password,
       })
       .then((response) => {
         const newUser: IUser = {
@@ -56,89 +59,69 @@ function SignupTab({ setModal }: MyModalProps) {
         } else {
           setAlert(error.message);
         }
+      })
+      .finally(() => {
+        setSubmitting(false);
       });
   }
 
   return (
-    <Form>
-      <Form.Group className="mb-3" controlId="formFName">
-        <Form.Label>First Name</Form.Label>
-        <Form.Control
-          type="input"
-          value={firstNameInput}
-          onChange={(e) => setFirstNameInput(e.target.value)}
-        />
-      </Form.Group>
+    <Formik
+      validationSchema={schema().shape({
+        firstName: validictonary.name("First Name"),
+        lastName: validictonary.name("Last Name"),
+        phone: validictonary.phone,
+        email: validictonary.email,
+        password: validictonary.password(),
+        confirmPassword: validictonary.confirmPassword(),
+      })}
+      onSubmit={(e, { setSubmitting }) => signIn(e, setSubmitting)}
+      initialValues={{
+        firstName: "",
+        lastName: "",
+        phone: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      }}
+    >
+      {({ handleSubmit, isSubmitting }) => (
+        <Form noValidate onSubmit={handleSubmit}>
+          <Row className="mb-3">
+            <MyInput name="firstName" label="First Name" />
+            <MyInput name="lastName" label="Last Name" />
+          </Row>
 
-      <Form.Group className="mb-3" controlId="formLName">
-        <Form.Label>Last Name</Form.Label>
-        <Form.Control
-          type="input"
-          value={lastNameInput}
-          onChange={(e) => setLastNameInput(e.target.value)}
-        />
-      </Form.Group>
+          <Row className="mb-3">
+            <MyInput
+              name="email"
+              label="Email address"
+              type="email"
+              feedback="Now we can send you all of our beautiful ads!"
+            />
+            <MyInput name="phone" label="Phone Number" type="tel" />
+          </Row>
 
-      <Form.Group className="mb-3" controlId="formEmail">
-        <Form.Label>Email address</Form.Label>
-        <Form.Control
-          type="email"
-          value={emailInput}
-          onChange={(e) => setEmailInput(e.target.value)}
-        />
-      </Form.Group>
+          <Row className="mb-3">
+            <MyInput
+              name="password"
+              label="Password"
+              type="password"
+              feedback="Looks pretty safe!"
+            />
+            <MyInput
+              name="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              feedback="Great! You just passed our memory test!"
+            />
+          </Row>
 
-      <Form.Group className="mb-3" controlId="formPhone">
-        <Form.Label>Phone Number</Form.Label>
-        <Form.Control
-          type="tel"
-          value={phoneInput}
-          onChange={(e) => setPhoneInput(e.target.value)}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formPassword">
-        <Form.Label>Password</Form.Label>
-        <Form.Control
-          type="password"
-          value={passwordInput}
-          onChange={(e) => setPasswordInput(e.target.value)}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formPassword">
-        <Form.Label>Confirm Password</Form.Label>
-        <Form.Control
-          type="password"
-          value={verPasswordInput}
-          onChange={(e) => setVerPasswordInput(e.target.value)}
-        />
-      </Form.Group>
-
-      <Form.Group className={`text-center`} controlId="formAlert">
-        <Alert
-          variant="danger"
-          dismissible={true}
-          show={alert ? true : false}
-          onClose={() => setAlert("")}
-        >
-          {alert}
-        </Alert>
-      </Form.Group>
-
-      <Form.Group className="text-center" controlId="formBtn">
-        <Button
-          variant="warning"
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            signIn();
-          }}
-        >
-          Sign In
-        </Button>
-      </Form.Group>
-    </Form>
+          <MyAlert alert={alert} setAlert={setAlert} />
+          <MySubmit text="Sign In" isSubmitting={isSubmitting} />
+        </Form>
+      )}
+    </Formik>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { config } from "./Configs/constants";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -17,14 +17,14 @@ import Faq from "./Components/Faq/Faq";
 
 /*
 important:
-finish all backend todos
-chatbot?
-update route guard to open login modal if not logged in
-
 add readme
-general code re-factor re-assment
+add 404 page not found
 bottom navbar (copy from other websites)
+chat gpt spinner and error (too long message, gpt error)
 
+if i have extra time:
+finish all backend todos
+general code re-factor re-assment
 add dates and unseen messages in chat
 add sign in with google?
 add user picture (and profile?)
@@ -53,12 +53,8 @@ function App() {
     localStorage.user = JSON.stringify(value);
   }
 
-  function openModal() {
-    setLoginModal(true);
-  }
-
   return (
-    <UserContext.Provider value={{ user, changeUser }}>
+    <UserContext.Provider value={{ user, changeUser, setLoginModal }}>
       <BrowserRouter>
         <Navbar modal={loginModal} setModal={setLoginModal} />
         <Routes>
@@ -66,7 +62,7 @@ function App() {
           <Route
             path="/mypets"
             element={
-              <UserRoute redirectRoute={"/"} openModal={openModal}>
+              <UserRoute redirectRoute={"/"}>
                 <MyPets />
               </UserRoute>
             }
@@ -75,7 +71,7 @@ function App() {
           <Route
             path="/profile"
             element={
-              <UserRoute redirectRoute={"/"} openModal={openModal}>
+              <UserRoute redirectRoute={"/"}>
                 <Profile />
               </UserRoute>
             }
@@ -85,7 +81,7 @@ function App() {
           <Route
             path="/contact"
             element={
-              <UserRoute redirectRoute={"/"} openModal={openModal}>
+              <UserRoute redirectRoute={"/"}>
                 <Contact />
               </UserRoute>
             }
@@ -93,11 +89,7 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <UserRoute
-                redirectRoute={"/"}
-                onlyAdmin={true}
-                openModal={openModal}
-              >
+              <UserRoute redirectRoute={"/"} onlyAdmin={true}>
                 <Dashboard />
               </UserRoute>
             }

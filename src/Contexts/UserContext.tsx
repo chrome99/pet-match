@@ -16,6 +16,7 @@ export type IUser = {
 export type UserContextType = {
   user: IUser | null;
   changeUser: Function;
+  setLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type opString = string | undefined;

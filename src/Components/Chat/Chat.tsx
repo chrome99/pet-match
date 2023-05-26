@@ -26,6 +26,7 @@ function Chat({ currentRequest }: ChatProps) {
 
   function sendMsg(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (msgInput.length > 500) return;
     if (!user || !currentRequest) return;
 
     const newMsg: Message = {
