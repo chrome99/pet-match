@@ -11,16 +11,15 @@ const usersRoute = require("./routes/users");
 const wishlistsRoute = require("./routes/wishlists");
 const authRoute = require("./routes/auth");
 
+const { verifyToken } = require("./middleware/auth");
+
 const URI = process.env.URI;
 const PORT = process.env.PORT;
 
 /*
 todo:
-throughly test backend!
-validate all incoming user input using middleware (for each schema)
-use global middleware for user and admin (with exceptions)
 use seperate endpoint / controller for file upload
-
+onsave - make sure connected docs have automated saves
 fix bug where user can adopt pet, but then admin can make pet available - 
     make sure that if the pet is made available to also remove it from the
     user's pet's list.
@@ -33,9 +32,9 @@ app.use(cors({
   origin: ['http://localhost:3000', 'https://pet-adoption-yhs3hgb6ly.netlify.app']
 }));
 
-app.use('/request', requestsRoute);
+app.use('/request', verifyToken, requestsRoute);
 app.use('/pet', petsRoute);
-app.use('/user', usersRoute);
+app.use('/user', verifyToken, usersRoute);
 app.use('/wishlist', wishlistsRoute);
 app.use('/auth', authRoute);
 

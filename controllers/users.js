@@ -61,9 +61,10 @@ exports.update = asyncHandler(async (req, res) => {
     if (email) {userDoc.email = email}
     if (phone) {userDoc.phone = phone}
     if (password) {userDoc.password = password}
+    if (bio) {userDoc.bio = bio}
 
-    //bio can be an empty field, so if empty string set to empty string
-    if (bio || bio === "") {userDoc.bio = bio}
+    //bio can be an empty field, so if null set to empty string
+    if (bio === null) {userDoc.bio = ""}
 
     const updatedUser = await userDoc.save()
     res.status(200).send(updatedUser);

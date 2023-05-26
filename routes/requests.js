@@ -1,19 +1,21 @@
 const express = require('express');
 const router = express.Router();
 
-const { verifyToken, adminOnly } = require("../middleware/auth");
+const { adminOnly } = require("../middleware/auth");
 const RequestsController = require('../controllers/requests');
 
+//all request routes go through the verifyToken middleware
+
 //get all unattended requests
-router.get("/unattended", verifyToken, adminOnly, RequestsController.getUnattended);
+router.get("/unattended", adminOnly, RequestsController.getUnattended);
 
 //get all requests made by user (filter requests by user id)
-router.get("/:id", verifyToken, RequestsController.getByUser);
+router.get("/:id", RequestsController.getByUser);
 
 //get all requests handled by admin (filter requests by admin id)
-router.get("/admin/:id", verifyToken, adminOnly, RequestsController.getByAdmin);
+router.get("/admin/:id", adminOnly, RequestsController.getByAdmin);
 
 //get messages by request id
-router.get("/messages/:id", verifyToken, RequestsController.getMessages)
+router.get("/messages/:id", RequestsController.getMessages)
 
 module.exports = router;

@@ -10,9 +10,9 @@ exports.register = asyncHandler(async (req, res) => {
         return res.status(400).send("All input is required");
     }
 
-    const userExists = await User.findOne({ email })
-    if (userExists) {
-        return res.status(400).send("User already exists");
+    const emailExists = await User.findOne({ email })
+    if (emailExists) {
+        return res.status(400).send("Email already listed for other user.");
     }
 
     req.body.admin = false;

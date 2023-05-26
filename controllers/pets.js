@@ -73,10 +73,10 @@ exports.getById = asyncHandler(async (req, res) => {
 //post new pet
 exports.post = asyncHandler(async (req, res) => {
     const {type, name, adoptionStatus, height, weight,
-        color, bio, hypoallergnic, dietery, breed} = req.body;
+        color, hypoallergnic, dietery, breed} = req.body;
 
    if (!(type && name && adoptionStatus && height && weight
-       && color && bio && hypoallergnic && dietery && breed)) {
+       && color && hypoallergnic && dietery && breed)) {
        return res.status(400).send("All input is required");
    }
 
@@ -175,6 +175,9 @@ exports.update = asyncHandler(async (req, res) => {
     if (hypoallergnic) {petToUpdate.hypoallergnic = hypoallergnic}
     if (dietery) {petToUpdate.dietery = dietery}
     if (breed) {petToUpdate.breed = breed}
+
+    //bio can be an empty field, so if got "empty_bio" from frontend, set to empty string
+    if (bio === "empty_bio") {petToUpdate.bio = ""}
 
     const result = await petToUpdate.save();
     return res.status(200).send(result);

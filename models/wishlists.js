@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
-const rString = {type: String, required: true}
 const wishlistSchema = new mongoose.Schema({
-    userId: rString,
-    petId: rString
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
+    petId: { type: mongoose.Schema.Types.ObjectId, ref: 'Pet', required: true}
 }, {timestamps: true});
 
 const Wishlist = mongoose.model("Wishlist", wishlistSchema);

@@ -1,18 +1,18 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const rString = {type: String, required: true}
+const rString = {type: String, required: true, maxLength: 20}
 const rBoolean = {type: Boolean, required: true}
 const userSchema = new mongoose.Schema({
     firstName: rString,
     lastName: rString,
     phone: rString,
-    email: {type: String, required: true, lowercase: true},
-    password: rString,
-    bio: { type: String },
+    email: {type: String, required: true, lowercase: true, unique: true, maxLength: 50},
+    password: {type: String, required: true, min: 8, maxLength: 100},
+    bio: { type: String, maxLength: 500 },
     admin: rBoolean,
     token: { type: String },
-    pets: {type: Array, required: true}
+    pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pet', required: true}]
 }, {timestamps: true});
 
 

@@ -12,7 +12,7 @@ module.exports = (io, socket) => {
         //create message
         const newMessage = new Message(data);
         const result = await newMessage.save()
-        io.to(result.requestId).emit("sendMessage", result); //requestId is the room!
+        io.to(data.requestId).emit("sendMessage", result); //requestId is the room!
 
         //update request about new message
         const updateRequest = await Request.findById(newMessage.requestId)
@@ -107,7 +107,8 @@ module.exports = (io, socket) => {
                 ],
             })
             const botResponse = response.data.choices[0].message.content;
-            const newBotMsg = {requestId: data.requestId, userId: "Bot", userName: "Chat-GPT Bot", value: botResponse}; 
+            //bot has his own user so potentially he can have a profile, bio, image, etc.
+            const newBotMsg = {requestId: data.requestId, userId: "646e1ec676f95c539fe79f48", userName: "Chat-GPT Bot", value: botResponse}; 
             sendMessage(newBotMsg);
         }
         catch {
