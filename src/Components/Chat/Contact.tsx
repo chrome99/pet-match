@@ -190,9 +190,9 @@ function Contact() {
       }
     }
 
-    function onError(value: string) {
-      alert(value);
-    }
+    // function onError(value: string) {
+    //   alert(value);
+    // }
 
     socket.connect();
 
@@ -213,13 +213,13 @@ function Contact() {
     socket.on("botAnswer", onNewMsg);
     socket.on("newRequest", onNewRequest);
     socket.on("changeReqState", onChangeReqState);
-    socket.on("error", onError);
+    // socket.on("error", onError);
 
     return () => {
       socket.off("sendMessage", onNewMsg);
       socket.off("botAnswer", onNewMsg);
       socket.off("newRequest", onNewRequest);
-      socket.on("error", onError);
+      // socket.on("error", onError);
       socket.off("changeReqState", onChangeReqState);
       socket.disconnect();
     };

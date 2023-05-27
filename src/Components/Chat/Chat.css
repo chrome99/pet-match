@@ -50,6 +50,10 @@
     background-color: #AFE1AF;
     align-self: flex-end;
 }
+.botSpinner {
+    margin-right: 1rem;
+    align-self: flex-end;
+}
 .receivedMessage {
     background-color: #E5E4E2;
     color: black;

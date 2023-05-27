@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import "./RequestForm.css";
-import { Form, Button, Alert, Row } from "react-bootstrap";
+import { Form, Row } from "react-bootstrap";
 import { UserContext, UserContextType } from "../../Contexts/UserContext";
 import { socket } from "./Socket";
 import { object as schema } from "yup";
@@ -18,7 +18,6 @@ function RequestForm({ setModal }: RequestFormProps) {
 
   type formData = {
     title: string;
-    body: string;
   };
   function submit(
     form: formData,
@@ -28,9 +27,7 @@ function RequestForm({ setModal }: RequestFormProps) {
 
     socket.emit("newRequest", {
       title: form.title,
-      body: form.body,
       userId: user.id,
-      userName: user.firstName + " " + user.lastName,
     });
     setModal(false);
     setSubmitting(false);
@@ -41,21 +38,16 @@ function RequestForm({ setModal }: RequestFormProps) {
       <Formik
         validationSchema={schema().shape({
           title: validictonary.title,
-          body: validictonary.message,
         })}
         onSubmit={(e, { setSubmitting }) => submit(e, setSubmitting)}
         initialValues={{
           title: "",
-          body: "",
         }}
       >
         {({ handleSubmit, isSubmitting }) => (
           <Form noValidate onSubmit={handleSubmit}>
             <Row className="mb-3">
               <MyInput name="title" label="Request Title" />
-            </Row>
-            <Row className="mb-3">
-              <MyInput name="body" label="Your Request" />
             </Row>
 
             <MyAlert alert={alert} setAlert={setAlert} />

@@ -1,5 +1,4 @@
 #welcomeContainer {
-    height: 800px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -7,7 +6,8 @@
     color: white;
     align-items: center;
     position: relative;
-    background: linear-gradient(184deg, rgba(2,0,36,0) 0%, rgba(0, 0, 0, 0.6) 46%, rgba(0,0,0,0) 100%); 
+    background: linear-gradient(184deg, rgba(2,0,36,0) 0%, rgba(0, 0, 0, 0.6) 46%, rgba(0,0,0,0) 100%);
+    padding: 14rem 0rem;
 }
 #welcomeContainer .heading {
     margin-top: 0;

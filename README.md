@@ -45,9 +45,9 @@ For the backend:
 4. Start the backend server using `yarn dev`. The server will run by default at port 8080.
 5. Access the application in your web browser at http://localhost:3000.
 
-## Want to try admin features?
+## Want to try some _cool admin features?_
 
-To get access to features that are only available for admins visiting the site (dashboard, giving technical support to customers), please contact me at efeldman207@gmail.com.
+To get access to features that are only available for admins visiting the site (dashboard, giving technical support to customers), please open a new request at the contact page, click on the "Transfer to Human" Button, and I will attend to your request (and possibly make you an admin).
 
 ## Contribution Guidelines
 

@@ -17,20 +17,6 @@ import Faq from "./Components/Faq/Faq";
 import NotFound from "./Components/NotFound/NotFound";
 import Footer from "./Components/Navbar/Footer";
 
-/*
-important:
-chat gpt spinner and error (too long message, gpt error)
-
-if i have extra time:
-finish all backend todos
-general code re-factor re-assment
-add dates and unseen messages in chat
-add sign in with google?
-add user picture (and profile?)
-use more populate
-
-*/
-
 export const server = axios.create({
   baseURL: config.API_URL,
 });
