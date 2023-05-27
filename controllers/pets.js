@@ -95,7 +95,6 @@ exports.post = asyncHandler(async (req, res) => {
 
 //change adoption status to available, adopted, or fostered
 exports.changeAdoptionStatus = asyncHandler(async (req, res) => {
-    console.log(req.body);
     let { type, value, userId } = req.body;
     const petId = req.params.id;
     if (type === "adopt") {type = "Adopted"}
@@ -106,8 +105,6 @@ exports.changeAdoptionStatus = asyncHandler(async (req, res) => {
     }
     const currentUser = await User.findById(userId);
     const pet = await Pet.findById(petId);
-
-    console.log(currentUser);
     
     if (value === true) {
         const UserOwnsPet = currentUser.pets.includes(petId);
