@@ -14,7 +14,7 @@ const petSchema = new mongoose.Schema({
     bio: {type: String, maxLength: 500},
     hypoallergnic: rBoolean,
     dietery: {type: Array, required: true},
-    breed: rString,
+    breed: {type: String, required: true, maxLength: 40},
 }, {timestamps: true});
 
 const Pet = mongoose.model("Pet", petSchema);
