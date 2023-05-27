@@ -1,0 +1,21 @@
+#footerContainer {
+    width: 100%;
+}
+footer {
+    background: #212529;
+}
+.text-small {
+    font-size: 0.9rem;
+}
+
+#footerContainer a {
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+#footerContainer a:hover, #footerContainer a:focus {
+    color: #f9ba48;
+}
+.footerHeading {
+    color: #f9ba48;
+}

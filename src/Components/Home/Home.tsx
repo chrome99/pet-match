@@ -8,7 +8,7 @@ import { server } from "../../App";
 import { IPet } from "../Pet/PetProfile";
 
 function Home() {
-  const { setLoginModal } = useContext(UserContext) as UserContextType;
+  const { user, setLoginModal } = useContext(UserContext) as UserContextType;
   const [currentImg, setCurrentImg] = useState(1);
   const [recentPets, setRecentPets] = useState<IPet[] | null | undefined>(
     undefined
@@ -18,7 +18,7 @@ function Home() {
 
   useEffect(() => {
     function didAccessDenied() {
-      if (location.state?.accessDenied === true) {
+      if (location.state?.accessDenied === true && !user) {
         setLoginModal(true);
       }
     }

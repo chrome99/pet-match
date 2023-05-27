@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { config } from "./Configs/constants";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -14,12 +14,11 @@ import Navbar from "./Components/Navbar/Navbar";
 import Dashboard from "./Components/Admin/Dashboard";
 import Contact from "./Components/Chat/Contact";
 import Faq from "./Components/Faq/Faq";
+import NotFound from "./Components/NotFound/NotFound";
+import Footer from "./Components/Navbar/Footer";
 
 /*
 important:
-add readme
-add 404 page not found
-bottom navbar (copy from other websites)
 chat gpt spinner and error (too long message, gpt error)
 
 if i have extra time:
@@ -94,7 +93,9 @@ function App() {
               </UserRoute>
             }
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </UserContext.Provider>
   );
