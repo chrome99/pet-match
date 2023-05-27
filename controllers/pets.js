@@ -3,7 +3,6 @@ const { ObjectId } = require("mongodb");
 const { User } = require("../models/users");
 const { Pet } = require("../models/pets");
 
-//todo: remove later for a different general controller / utility
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
     cloud_name: "dfdcu51jz",

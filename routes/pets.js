@@ -4,7 +4,6 @@ const router = express.Router();
 const PetController = require("../controllers/pets");
 const { verifyToken, adminOnly } = require("../middleware/auth");
 
-//todo: remove later for a different general controller / utility
 const multer = require("multer");
 const storage = new multer.memoryStorage();
 const upload = multer({storage: storage});

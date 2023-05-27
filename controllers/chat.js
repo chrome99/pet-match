@@ -9,10 +9,12 @@ const { Message } = require("../models/messages");
 module.exports = (io, socket) => {
     // send a new Message
     const sendMessage = asyncHandler(async (data) => {
+        //options
+        if (!data.msgType) data.msgType = "sendMessage";
         //create message
         const newMessage = new Message(data);
         const result = await newMessage.save()
-        io.to(data.requestId).emit("sendMessage", result); //requestId is the room!
+        io.to(data.requestId).emit(data.msgType, result); //requestId is the room!
 
         //update request about new message
         const updateRequest = await Request.findById(newMessage.requestId)
@@ -22,21 +24,16 @@ module.exports = (io, socket) => {
   
     //add a new request
     const newRequest = asyncHandler(async (data) => {
-        const { title, body, userId, userName, requestId } = data;
-        if (!(title && body && userId && userName)) {
+        const { title, userId } = data;
+        if (!(title && userId)) {
             throw Error("All input is required");
         }
 
-        const newMessageId = new ObjectId();
-        const newRequestId = new ObjectId(requestId);
-        const newFirstMsg = new Message({_id: newMessageId, requestId: newRequestId, userId: userId, userName: userName, value: body}) 
-        const newRequest = new Request({_id: newRequestId, messages: [newMessageId], title: title, userId: userId, state: "bot"})
-        requestResult = await newRequest.save()
-        msgResult = await newFirstMsg.save()
-        requestResult.messages = [msgResult];
+        const newRequest = new Request({title: title, userId: userId, state: "bot"});
+        requestResult = await newRequest.save();
+
         //sending new request to userId room, because user is not listening on this request (he does not have the new request id)
         io.to(userId).emit("newRequest", requestResult);
-        botAnswer(msgResult);
     })
 
     //change request status
@@ -108,17 +105,13 @@ module.exports = (io, socket) => {
             })
             const botResponse = response.data.choices[0].message.content;
             //bot has his own user so potentially he can have a profile, bio, image, etc.
-            const newBotMsg = {requestId: data.requestId, userId: "646e1ec676f95c539fe79f48", userName: "Chat-GPT Bot", value: botResponse}; 
+            const newBotMsg = {requestId: data.requestId, userId: "646e1ec676f95c539fe79f48", userName: "Chat-GPT Bot", value: botResponse, msgType: "botAnswer"}; 
             sendMessage(newBotMsg);
         }
-        catch {
-            sendError({destination: data.requestId, value: "Chat error. Please send your message again at a later date."})
+        catch (err) {
+            io.to(data.requestId).emit("botError", err.message);
         }
     }
-
-    const sendError = asyncHandler(async (data) => {
-        io.to(data.destination).emit("error", data.value);
-    })
 
     //join a specific room (room name is request id)
     const joinRoom = asyncHandler(async (data) => {

@@ -16,16 +16,6 @@ const { verifyToken } = require("./middleware/auth");
 const URI = process.env.URI;
 const PORT = process.env.PORT;
 
-/*
-todo:
-use seperate endpoint / controller for file upload
-onsave - make sure connected docs have automated saves
-fix bug where user can adopt pet, but then admin can make pet available - 
-    make sure that if the pet is made available to also remove it from the
-    user's pet's list.
-
-*/
-
 const app = express();
 app.use(express.json());
 app.use(cors({
