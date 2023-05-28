@@ -74,7 +74,7 @@ function PetProfile() {
     server
       .post(
         `pet/${id}/adopt`,
-        { type: type, value: value },
+        { type: type, value: value, userId: user.id },
         {
           headers: { "x-access-token": user.token },
         }
