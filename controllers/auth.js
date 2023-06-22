@@ -15,7 +15,15 @@ exports.register = asyncHandler(async (req, res) => {
         return res.status(400).send("Email already listed for other user.");
     }
 
-    req.body.admin = false;
+    //if this is the first user, make user admin
+    const usersCount = await User.countDocuments();
+    if (usersCount === 0) {
+        req.body.admin = true;
+    }
+    else {
+        req.body.admin = false;
+    }
+
     req.body.bio = "";
     req.body.pets = [];
     const newUser = new User(req.body);
