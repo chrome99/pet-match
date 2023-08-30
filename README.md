@@ -34,11 +34,11 @@ To run the Pet Match Website locally, follow these steps:
 
 For the frontend:
 
-`git clone https://github.com/israeltechchallenge/fs-pet-adoption-fe-chrome99.git`
+`git clone https://github.com/chrome99/pet-match-fe.git`
 
 For the backend:
 
-`git clone https://github.com/israeltechchallenge/fs-pet-adoption-be-chrome99.git`
+`git clone https://github.com/chrome99/pet-match-be.git`
 
 2. Install the necessary dependencies for the frontend and backend, using the command: `npm install`
 3. Start the frontend server using: `npm start`. If you are making any changes, you should also make sure to remind the typescript compiler to watch all files with: `tsc -w`. The server will run by default at port 3000.

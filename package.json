@@ -1,8 +1,8 @@
 {
-  "name": "fs-pet-adoption-be-chrome99",
+  "name": "pet-match-be",
   "version": "1.0.0",
   "description": "",
-  "repository": "https://github.com/israeltechchallenge/fs-pet-adoption-be-chrome99.git",
+  "repository": "https://github.com/chrome99/pet-match-be.git",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
