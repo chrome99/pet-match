@@ -1,4 +1,7 @@
-# Pet Match Website
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/de90a6f8-f43c-4e8f-bbb3-0caea89f266e" alt="Okapi Logo" width="500" />
+  <h1>Pet Match Web App</h1>
+</div>
 
 This project is a full-stack web application developed as the final project for the Israel Tech Challenge < itc > bootcamp. It showcases my abilities in Frontend and Backend development, and incorporates various technologies and features. The Pet Match application is designed to help pet lovers find their perfect companions. Whether you're looking to adopt, foster, or return a pet, the website provides an intuitive platform to connect with adorable pets in need of a loving home. The project is built using React, TypeScript, Node.js, and MongoDB. It utilizes additional libraries and services such as OpenAI for chatbot functionality, Socket.IO for real-time chat, Formik and Yup for form validation, Bootstrap for styling, and deployment on Netlify for the frontend and Heroku for the backend.
 
