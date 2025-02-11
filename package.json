@@ -1,0 +1,33 @@
+{
+  "name": "pet-match-be",
+  "version": "1.0.0",
+  "description": "",
+  "repository": "https://github.com/chrome99/pet-match-be.git",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "author": "Ezra Feldman",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.3.6",
+    "bcrypt": "^5.1.0",
+    "cloudinary": "^1.36.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^5.3.0",
+    "mongoose": "^7.0.5",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^3.2.1",
+    "socket.io": "^4.6.1",
+    "uuid": "^9.0.0",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
