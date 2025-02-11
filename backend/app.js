@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require('cors');
+const cors = require("cors");
 require("dotenv").config();
 
 const setupSocket = require("./sockets/chat");
@@ -18,29 +18,30 @@ const PORT = process.env.PORT;
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin: ['http://localhost:3000', 'https://pet-adoption-yhs3hgb6ly.netlify.app']
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://pet-match-app.netlify.app"],
+  })
+);
 
-app.use('/request', verifyToken, requestsRoute);
-app.use('/pet', petsRoute);
-app.use('/user', verifyToken, usersRoute);
-app.use('/wishlist', wishlistsRoute);
-app.use('/auth', authRoute);
+app.use("/request", verifyToken, requestsRoute);
+app.use("/pet", petsRoute);
+app.use("/user", verifyToken, usersRoute);
+app.use("/wishlist", wishlistsRoute);
+app.use("/auth", authRoute);
 
 main();
 
-async function main () {
-    try {
-        await mongoose.connect(URI);
-        console.log("connected to db");
-        const server = app.listen(PORT, () => {
-            console.log(`Listening on port ${PORT}...`)
-            setupSocket(server);
-        })
-    }
-    catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+async function main() {
+  try {
+    await mongoose.connect(URI);
+    console.log("connected to db");
+    const server = app.listen(PORT, () => {
+      console.log(`Listening on port ${PORT}...`);
+      setupSocket(server);
+    });
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
 }

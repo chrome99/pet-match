@@ -5,7 +5,7 @@
 
 This project is a full-stack web application developed as the final project for the Israel Tech Challenge < itc > bootcamp. It showcases my abilities in Frontend and Backend development, and incorporates various technologies and features. The Pet Match application is designed to help pet lovers find their perfect companions. Whether you're looking to adopt, foster, or return a pet, the website provides an intuitive platform to connect with adorable pets in need of a loving home. The project is built using React, TypeScript, Node.js, and MongoDB. It utilizes additional libraries and services such as OpenAI for chatbot functionality, Socket.IO for real-time chat, Formik and Yup for form validation, Bootstrap for styling, and deployment on Netlify for the frontend and Heroku for the backend.
 
-A live version of the Pet Match Website is available [here.](https://pet-adoption-yhs3hgb6ly.netlify.app/)
+A live version of the Pet Match Website is available [here.](https://pet-match-app.netlify.app/)
 
 ## Features
 
