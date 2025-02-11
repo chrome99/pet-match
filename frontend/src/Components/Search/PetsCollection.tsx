@@ -52,7 +52,7 @@ function PetsCollection({
       ) : (
         ""
       )}
-      {pets.map((pet) => {
+      {pets.filter(Boolean).map((pet) => {
         return (
           <PetCard pet={pet} key={pet.id} onClickFunction={onClickFunction} />
         );
