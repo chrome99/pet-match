@@ -6,16 +6,17 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-      - ./mongo-dump:/dump
+      - ./mongo-dump:/docker-entrypoint-initdb.d
 
   backend:
+    build: ./backend
     image: chrome99/pet-match:backend
     ports:
       - "8080:8080"
     environment:
-      - URI=mongodb://mongodb:27017
+      - URI=mongodb://mongodb:27017/petAdoption
       - PORT=8080
-      - TOKEN_KEY=your_token_key
+      - TOKEN_KEY=random-string-token-key
       - OPEN_AI_API_KEY=your_openai_api_key
       - CLOUDINARY_CLOUD_NAME=your_cloudinary_name
       - CLOUDINARY_API_KEY=your_cloudinary_api_key
@@ -24,6 +25,7 @@ services:
       - mongodb
 
   frontend:
+    build: ./frontend
     image: chrome99/pet-match:frontend
     ports:
       - "3000:3000"
