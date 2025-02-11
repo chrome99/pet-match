@@ -11,6 +11,8 @@ This project is a full-stack web application developed as the final project for 
 
 A live version of the Pet Match Website is available [here.](https://pet-match-app.netlify.app/)
 
+https://github.com/user-attachments/assets/ca0e14c1-fed3-404b-9513-50adc2bd34bb
+
 ## Features
 
 - **Homepage**: The homepage greets users with a modern and visually appealing interface. It features a responsive carousel that showcases the most recently added pets.
