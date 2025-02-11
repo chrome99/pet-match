@@ -1,11 +1,17 @@
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/de90a6f8-f43c-4e8f-bbb3-0caea89f266e" alt="Okapi Logo" width="500" />
+  <img src="https://github.com/user-attachments/assets/de90a6f8-f43c-4e8f-bbb3-0caea89f266e" alt="Pet Match Logo" width="500" />
   <h1>Pet Match Web App</h1>
+  
+  [![Netlify Status](https://api.netlify.com/api/v1/badges/4bb04b6d-881a-4666-9dfc-f4a08562babe/deploy-status)](https://pet-match-app.netlify.app/)
+  [![Docker Hub](https://img.shields.io/docker/image-size/chrome99/pet-match/frontend?label=Docker%20Hub&color=green)](https://hub.docker.com/repository/docker/chrome99/pet-match/general)
+
 </div>
 
 This project is a full-stack web application developed as the final project for the Israel Tech Challenge < itc > bootcamp. It showcases my abilities in Frontend and Backend development, and incorporates various technologies and features. The Pet Match application is designed to help pet lovers find their perfect companions. Whether you're looking to adopt, foster, or return a pet, the website provides an intuitive platform to connect with adorable pets in need of a loving home. The project is built using React, TypeScript, Node.js, and MongoDB. It utilizes additional libraries and services such as OpenAI for chatbot functionality, Socket.IO for real-time chat, Formik and Yup for form validation, Bootstrap for styling, and deployment on Netlify for the frontend and Heroku for the backend.
 
 A live version of the Pet Match Website is available [here.](https://pet-match-app.netlify.app/)
+
+https://github.com/user-attachments/assets/ca0e14c1-fed3-404b-9513-50adc2bd34bb
 
 ## Features
 
@@ -31,41 +37,35 @@ A live version of the Pet Match Website is available [here.](https://pet-match-a
 
 ## Installation and Setup
 
-To run the Pet Match Website locally, follow these steps:
+Clone the repository:
 
-1. Clone both the frontend repository and backend repository from GitHub.
+```sh
+git clone https://github.com/chrome99/pet-match.git
+cd pet-match
+```
 
-For the frontend:
+### Run with Docker Compose
 
-`git clone https://github.com/chrome99/pet-match-fe.git`
+```sh
+docker compose up -d
+```
 
-For the backend:
+### Run Locally
 
-`git clone https://github.com/chrome99/pet-match-be.git`
+```sh
+echo "URI=mongodb://mongodb:27017/petAdoption" >> backend/.env
+docker compose up -d mongodb
+cd frontend && npm install && npm start &
+cd ../backend && npm install && yarn dev
+```
 
-2. Install the necessary dependencies for the frontend and backend, using the command: `npm install`
-3. Start the frontend server using: `npm start`. If you are making any changes, you should also make sure to remind the typescript compiler to watch all files with: `tsc -w`. The server will run by default at port 3000.
-4. Start the backend server using `yarn dev`. The server will run by default at port 8080.
-5. Access the application in your web browser at http://localhost:3000.
+### Default credentials (Local only)
 
-## Want to try some _cool admin features?_
+- **Admin:**
 
-To get access to features that are only available for admins visiting the site (dashboard, giving technical support to customers), please open a new request at the contact page, click on the "Transfer to Human" Button, and I will attend to your request (and possibly make you an admin).
+  - **Username:** a@a.com
+  - **Password:** 123123Az
 
-## Contribution Guidelines
-
-If you wish to contribute to the Pet Match website, please follow these guidelines:
-
-- Submit bug reports, feature requests, or pull requests through the appropriate channels.
-- Ensure that your contributions align with the project's coding standards and best practices.
-- Provide clear and detailed explanations of your changes or additions.
-
-## Acknowledgements
-
-I would like to express my heartfelt gratitude to ITC for providing me with the knowledge and opportunity to create this project. Special thanks to the instructors and mentors who guided me throughout the development process. Your patient guidance and incredible support has helped me overcome any challenge I encountered during the development process!
-
-## Get in Touch
-
-If you have any questions, feedback, or need support, please feel free to reach out. You can contact me at efeldman207@gmail.com.
-
-Thank you for your interest in this project, and I hope you enjoy exploring the Pet Match Website!
+- **Client:**
+  - **Username:** b@b.com
+  - **Password:** 123123Az
